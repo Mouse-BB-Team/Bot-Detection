@@ -30,24 +30,28 @@ func getUsers(db *pg.DB) (users []db_puller.User) {
 }
 
 func getSessions(db *pg.DB, userId int64) (sessions []db_puller.Session) {
-	err := db.Model(&sessions).Where("user_id = ?", userId).Order("event_time ASC").Select()
+	err := db.Model(&sessions).Where(fmt.Sprintf("%s = ?", UserIdAttribute), userId).Order(fmt.Sprintf("%s ASC", EventTimeAttribute)).Select()
 	utils.HandleError(err)
 	return
 }
 
-func splitIntoSequences(sessions []db_puller.Session, event db_puller.Event, gapSeconds float64) (sequences []*[]db_puller.Session) {
+func splitIntoSequences(sessions []db_puller.Session, event db_puller.Event, gapSeconds float64) (sequences *[]*[]db_puller.Session) {
 
 	var currSequence = new([]db_puller.Session)
 
-	sequences = append(sequences, currSequence)
+	sequences = new([]*[]db_puller.Session)
+	*sequences = append(*sequences, currSequence)
 
 	var prev = db_puller.Session{EventTime: time.Time{}}
 
 	for _, curr := range sessions {
 		if curr.EventId == event.Id {
 			if isNewSequence(prev.EventTime, curr.EventTime, gapSeconds) {
+				if isSequenceToShort(currSequence, 10) {
+					*sequences = (*sequences)[:len(*sequences) - 1]
+				}
 				currSequence = new([]db_puller.Session)
-				sequences = append(sequences, currSequence)
+				*sequences = append(*sequences, currSequence)
 			}
 
 			*currSequence = append(*currSequence, curr)
@@ -55,6 +59,14 @@ func splitIntoSequences(sessions []db_puller.Session, event db_puller.Event, gap
 		}
 	}
 	return
+}
+
+func isSequenceToShort(sequence *[]db_puller.Session, length int) bool{
+	return len(*sequence) < length
+}
+
+func deleteElement(sequences []*[]db_puller.Session, elementCount int64) []*[]db_puller.Session {
+	return append(sequences[:elementCount], sequences[elementCount + 1:]...)
 }
 
 func isNewSequence(prev time.Time, curr time.Time, delayGap float64) bool {
