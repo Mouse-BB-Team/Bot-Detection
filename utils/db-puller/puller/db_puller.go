@@ -16,7 +16,7 @@ func pull(options *pg.Options) {
 
 	for _, user := range users {
 		sessions := getSessions(db, user.Id)
-		splitIntoSequences(sessions)
+		splitIntoSequences(sessions, db_puller.Event{Id: 1}, 1.0)
 
 	}
 
@@ -30,29 +30,37 @@ func getUsers(db *pg.DB) (users []db_puller.User) {
 }
 
 func getSessions(db *pg.DB, userId int64) (sessions []db_puller.Session) {
-	err := db.Model(&sessions).Where("user_id = ?", userId).Order("ASC event_time").Select()
+	err := db.Model(&sessions).Where("user_id = ?", userId).Order("event_time ASC").Select()
 	utils.HandleError(err)
 	return
 }
 
-func splitIntoSequences(sessions []db_puller.Session) (sequences []*[]db_puller.Session) {
+func splitIntoSequences(sessions []db_puller.Session, event db_puller.Event, gapSeconds float64) (sequences []*[]db_puller.Session) {
 
-	var sequenceGapSeconds = 1.0
+	var currSequence = new([]db_puller.Session)
 
-	//var currSequence *[]db_puller.Session
+	sequences = append(sequences, currSequence)
 
-	var prev db_puller.Session
+	var prev = db_puller.Session{EventTime: time.Time{}}
 
-	for _, element := range sessions {
-		if isNewSequence(prev.EventTime, element.EventTime, sequenceGapSeconds) {
+	for _, curr := range sessions {
+		if curr.EventId == event.Id {
+			if isNewSequence(prev.EventTime, curr.EventTime, gapSeconds) {
+				currSequence = new([]db_puller.Session)
+				sequences = append(sequences, currSequence)
+			}
 
+			*currSequence = append(*currSequence, curr)
+			prev = curr
 		}
-
-		//currSequence
 	}
-	return nil
+	return
 }
 
 func isNewSequence(prev time.Time, curr time.Time, delayGap float64) bool {
-	return curr.Sub(prev).Seconds() > delayGap
+	if !prev.IsZero() {
+		return curr.Sub(prev).Seconds() > delayGap
+	} else {
+		return false
+	}
 }

@@ -22,7 +22,7 @@ type Session struct {
 	XCoordinate int
 	YCoordinate int
 	EventTime   time.Time
+	EventId     int64
 	XResolution int
 	YResolution int
 }
-
