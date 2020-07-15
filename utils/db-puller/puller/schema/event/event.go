@@ -1,22 +1,14 @@
-package db_puller
+package event
 
-import (
-	"time"
-)
+import "time"
 
-type User struct {
-	tableName struct{} `sql:"dc.users"`
-	Id        int64
-	Login     string
-}
-
-type Event struct {
+type EventType struct {
 	tableName struct{} `sql:"dc.events"`
 	Id        int64
 	Name      string
 }
 
-type Session struct {
+type Event struct {
 	tableName   struct{} `sql:"dc.sessions"`
 	Id          int64
 	XCoordinate int
@@ -25,4 +17,8 @@ type Session struct {
 	EventId     int64
 	XResolution int
 	YResolution int
+}
+
+func InitialEmptyEvent()  Event{
+	return Event{EventTime: time.Time{}}
 }
