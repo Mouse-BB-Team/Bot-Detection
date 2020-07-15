@@ -1,7 +1,7 @@
 {
     "type": "record",
     "name": "userEvents",
-    "namespace": "dataCollection",
+    "namespace": "BotDetectionData",
     "doc": "Mouse events schema",
     "fields": [
         { "name": "userId", "type": "int" },
@@ -10,13 +10,13 @@
             "type": "array",
             "items": {
                 "type": "record",
-                "name": "singleEvent",
+                "name": "event",
                 "fields": [
                     { "name": "id", "type": ["null", "int"] },
-                    { "name": "xCoordinate", "type": "int"},
-                    { "name": "yCoordinate", "type": "int"},
-                    { "name": "xResolution", "type": "int"},
-                    { "name": "yResolution", "type": "int"}
+                    { "name": "xCoordinate", "type": "int" },
+                    { "name": "yCoordinate", "type": "int" },
+                    { "name": "xResolution", "type": "int" },
+                    { "name": "yResolution", "type": "int" }
                 ]
             }
         }},
