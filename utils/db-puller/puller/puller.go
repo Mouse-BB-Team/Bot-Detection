@@ -7,6 +7,7 @@ import (
 	"db-puller/utils"
 	"fmt"
 	"github.com/go-pg/pg"
+	"log"
 )
 
 var whereArgument = fmt.Sprintf("%s = ?", UserIdAttribute)
@@ -25,7 +26,7 @@ func (puller *Puller) Close() {
 	utils.HandleError(puller.database.Close())
 }
 
-func (puller *Puller) Pull(eventType event.EventType, gapDelay float64, minSequenceLength int) map[user.User]*sequences.SequenceList {
+func (puller *Puller) Pull(eventType event.EventType, gapDelay float64, minSequenceLength int, info bool) *map[user.User]*sequences.SequenceList {
 	users := getUsersFrom(puller.database)
 	sequenceList := make(map[user.User]*sequences.SequenceList)
 
@@ -34,7 +35,11 @@ func (puller *Puller) Pull(eventType event.EventType, gapDelay float64, minSeque
 		sequenceList[usr] = sessions.Split(eventType, gapDelay, minSequenceLength)
 	}
 
-	return sequenceList
+	if info {
+		printInfo(&sequenceList)
+	}
+
+	return &sequenceList
 }
 
 func getUsersFrom(db *pg.DB) (users []user.User) {
@@ -43,7 +48,7 @@ func getUsersFrom(db *pg.DB) (users []user.User) {
 	return
 }
 
-func getSessionsFor(user user.User, db *pg.DB) (sessions sequences.Sequence) {
+func getSessionsFor(user user.User, db *pg.DB) (sessions sequences.EventList) {
 	var events []event.Event
 	err := db.Model(&events).Where(whereArgument, user.Id).Order(orderArgument).Select()
 	utils.HandleError(err)
@@ -51,3 +56,12 @@ func getSessionsFor(user user.User, db *pg.DB) (sessions sequences.Sequence) {
 	return
 }
 
+func printInfo(result *map[user.User]*sequences.SequenceList) {
+	count := 0
+
+	for _, v := range *result {
+		count += len(v.Get())
+	}
+
+	log.Println(fmt.Sprintf("Total sequences count: %d", count))
+}
