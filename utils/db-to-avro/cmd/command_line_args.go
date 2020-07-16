@@ -6,14 +6,14 @@ import (
 )
 
 type Args struct {
-	GapTime *float64
+	GapTime           *float64
 	MinSequenceLength *int
-	InfoRequired *bool
-	DBPort *int
-	DBUser *string
-	DBPassword *string
-	DBName *string
-	EventTypeId *int
+	InfoRequired      *bool
+	DBPort            *int
+	DBUser            *string
+	DBPassword        *string
+	DBName            *string
+	EventTypeId       *int
 }
 
 func ParseArgs() (args Args) {

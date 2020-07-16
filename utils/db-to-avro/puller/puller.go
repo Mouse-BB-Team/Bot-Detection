@@ -2,8 +2,8 @@ package puller
 
 import (
 	"db-puller/consts"
-	"db-puller/schema"
 	"db-puller/lists"
+	"db-puller/schema"
 	"db-puller/utils"
 	"fmt"
 	"github.com/go-pg/pg"
