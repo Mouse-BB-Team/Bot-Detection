@@ -23,25 +23,26 @@ func (events *EventList) Set(eventList []event.Event) {
 
 func (events *EventList) Split(requiredEventType event.EventType, gapSeconds float64, minimumSequenceLength int) (splittedSequences *SequenceList) {
 	var eventList = new(EventList)
+	var previousEvent = event.InitialEmptyEvent()
 
 	splittedSequences = new(SequenceList)
-	splittedSequences.Append(eventList)
-
-	var previousEvent = event.InitialEmptyEvent()
 
 	for _, e := range events.Get() {
 		if isRequiredEvent(e, requiredEventType) {
 			if isBeginOfNewSequence(previousEvent.EventTime, e.EventTime, gapSeconds) {
-				if isPreviousSequenceToShort(eventList, minimumSequenceLength) {
-					splittedSequences.DropLastItem()
+				if !isPreviousSequenceToShort(eventList, minimumSequenceLength) {
+					splittedSequences.Append(eventList)
 				}
 				eventList = new(EventList)
-				splittedSequences.Append(eventList)
 			}
 
 			eventList.Append(e)
 			previousEvent = e
 		}
+	}
+
+	if !isPreviousSequenceToShort(eventList, minimumSequenceLength) {
+		splittedSequences.Append(eventList)
 	}
 
 	return
