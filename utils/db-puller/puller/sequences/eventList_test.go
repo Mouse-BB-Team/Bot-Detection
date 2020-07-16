@@ -2,151 +2,99 @@ package sequences
 
 import (
 	"db-puller/puller/schema/event"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 )
 
-//func TestSequence_Split(t *testing.T) {
-//	type args struct {
-//		requiredEventType     event.EventType
-//		gapSeconds            float64
-//		minimumSequenceLength int
-//	}
-//	tests := []struct {
-//		name                  string
-//		events                EventList
-//		args                  args
-//		wantSplittedSequences *SequenceList
-//	}{
-//		{
-//
-//		}
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if gotSplittedSequences := tt.events.Split(tt.args.requiredEventType, tt.args.gapSeconds, tt.args.minimumSequenceLength); !reflect.DeepEqual(gotSplittedSequences, tt.wantSplittedSequences) {
-//				t.Errorf("Split() = %v, want %v", gotSplittedSequences, tt.wantSplittedSequences)
-//			}
-//		})
-//	}
-//}
+func prepareEventList() (eventList []event.Event, firstSequence []event.Event, secondSequence []event.Event) {
+	firstSequenceTime := time.Now()
+	firstSequence = getEventsForIds([]int{1, 2, 3, 4, 5}, event.EventType{Id: 1}, firstSequenceTime, time.Millisecond * 900)
+	secondSequenceTime := firstSequenceTime.Add(6 * time.Second)
+	secondSequence = getEventsForIds([]int{1, 2, 3}, event.EventType{Id: 1}, secondSequenceTime, time.Millisecond * 900)
+	eventList = append(eventList, firstSequence...)
+	eventList = append(eventList, secondSequence...)
+	return
+}
 
-func Test_isBeginOfNewSequence(t *testing.T) {
-	type args struct {
-		prev     time.Time
-		curr     time.Time
-		delayGap float64
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "should return that this is not new sequence (gap time equals expected time)",
-			args: args{
-				prev: time.Unix(1, 0),
-				curr: time.Unix(2,0),
-				delayGap: 1.0,
-			},
-			want: false,
-		},
-		{
-			name: "should return that this is not new sequence (gap time smaller than expected time)",
-			args: args{
-				prev: time.Unix(1, 0),
-				curr: time.Unix(1,50),
-				delayGap: 1.0,
-			},
-			want: false,
-		},
-		{
-			name: "should return that this is new sequence",
-			args: args{
-				prev: time.Unix(1, 0),
-				curr: time.Unix(2,1),
-				delayGap: 1.0,
-			},
-			want: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := isBeginOfNewSequence(tt.args.prev, tt.args.curr, tt.args.delayGap); got != tt.want {
-				t.Errorf("isBeginOfNewSequence() = %v, want %v", got, tt.want)
-			}
+func getEventsForIds(ids []int, eventType event.EventType, beginTime time.Time, delayBetweenEvents time.Duration) (eventList []event.Event) {
+	for i := range ids {
+		eventList = append(eventList, event.Event{
+			Id: int64(i),
+			EventId: eventType.Id,
+			EventTime: beginTime.Add(delayBetweenEvents),
 		})
 	}
+	return
+}
+
+func TestSequence_Split(t *testing.T) {
+	t.Run("should split event list into array of sequences", func(t *testing.T) {
+		events, firstSequence, secondSequence := prepareEventList()
+
+		eventList := EventList{eventList: events}
+
+		splitted := eventList.Split(event.EventType{Id: 1}, 1.0, 1)
+
+		require.ElementsMatch(t, firstSequence, (*splitted).sequenceList[0].eventList)
+		require.ElementsMatch(t, secondSequence, (*splitted).sequenceList[1].eventList)
+	})
+}
+
+func Test_isBeginOfNewSequence(t *testing.T) {
+	t.Run("should return that this is not new sequence (gap time equals expected time)", func(t *testing.T) {
+		prev := time.Unix(1, 0)
+		curr := time.Unix(2, 0)
+		delayGap := 1.0
+
+		require.False(t, isBeginOfNewSequence(prev, curr, delayGap))
+	})
+
+	t.Run("should return that this is not new sequence (gap time smaller than expected time)", func(t *testing.T) {
+		prev := time.Unix(1, 0)
+		curr := time.Unix(1, 50)
+		delayGap := 1.0
+
+		require.False(t, isBeginOfNewSequence(prev, curr, delayGap))
+	})
+
+	t.Run("should return that this is new sequence", func(t *testing.T) {
+		prev := time.Unix(1, 0)
+		curr := time.Unix(2, 1)
+		delayGap := 1.0
+
+		require.True(t, isBeginOfNewSequence(prev, curr, delayGap))
+	})
 }
 
 func Test_isPreviousSequenceToShort(t *testing.T) {
-	type args struct {
-		sequence *EventList
-		length   int
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "should return that sequence is to short",
-			args: args{
-				sequence: &(EventList{eventList: make([]event.Event, 5)}),
-				length: 10,
-			},
-			want: true,
-		},
-		{
-			name: "should return that sequence has required minimum length",
-			args: args{
-				sequence: &(EventList{eventList: make([]event.Event, 10)}),
-				length: 10,
-			},
-			want: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := isPreviousSequenceToShort(tt.args.sequence, tt.args.length); got != tt.want {
-				t.Errorf("isPreviousSequenceToShort() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	t.Run("should return that sequence is to short", func(t *testing.T) {
+		sequence := EventList{eventList: make([]event.Event, 5)}
+		expectedLength := 10
+
+		require.True(t, isPreviousSequenceToShort(&sequence, expectedLength))
+	})
+
+	t.Run("should return that sequence is to short", func(t *testing.T) {
+		sequence := EventList{eventList: make([]event.Event, 10)}
+		expectedLength := 10
+
+		require.False(t, isPreviousSequenceToShort(&sequence, expectedLength))
+	})
 }
 
 func Test_isRequiredEvent(t *testing.T) {
-	type args struct {
-		event     event.Event
-		eventType event.EventType
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		{
-			name: "should return that event is required",
-			args: args{
-				event: event.Event{EventId: 1},
-				eventType: event.EventType{Id: 1},
-			},
-			want: true,
-		},
-		{
-			name: "should return that event is not required",
-			args: args{
-				event: event.Event{EventId: 1},
-				eventType: event.EventType{Id: 2},
-			},
-			want: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := isRequiredEvent(tt.args.event, tt.args.eventType); got != tt.want {
-				t.Errorf("isRequiredEvent() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+	t.Run("should return that event is required", func(t *testing.T) {
+		testEvent := event.Event{EventId: 1}
+		expectedEventType := event.EventType{Id: 1}
+
+		require.True(t, isRequiredEvent(testEvent, expectedEventType))
+	})
+
+	t.Run("should return that event is not required", func(t *testing.T) {
+		testEvent := event.Event{EventId: 1}
+		expectedEventType := event.EventType{Id: 2}
+
+		require.False(t, isRequiredEvent(testEvent, expectedEventType))
+	})
 }
