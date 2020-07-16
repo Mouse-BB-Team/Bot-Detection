@@ -1,7 +1,7 @@
-package sequences
+package lists
 
 import (
-	"db-puller/puller/schema/event"
+	"db-puller/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -11,7 +11,7 @@ func TestSequenceList_Append(t *testing.T) {
 	array := make([]*EventList, 5)
 	basicLength := len(array)
 	sequenceList := SequenceList{sequenceList: array}
-	elementToAppend := EventList{eventList: make([]event.Event, 2)}
+	elementToAppend := EventList{eventList: make([]schema.Event, 2)}
 	sequenceList.Append(&elementToAppend)
 
 	require.Len(t, sequenceList.sequenceList, 6)

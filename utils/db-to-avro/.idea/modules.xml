@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/db-puller.iml" filepath="$PROJECT_DIR$/.idea/db-puller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../db-to-avro/.idea/db-to-avro.iml" filepath="$PROJECT_DIR$/../db-to-avro/.idea/db-to-avro.iml" />
     </modules>
   </component>
 </project>

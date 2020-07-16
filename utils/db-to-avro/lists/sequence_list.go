@@ -1,4 +1,4 @@
-package sequences
+package lists
 
 type SequenceList struct {
 	sequenceList []*EventList

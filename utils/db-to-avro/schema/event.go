@@ -1,4 +1,4 @@
-package event
+package schema
 
 import "time"
 
@@ -19,6 +19,6 @@ type Event struct {
 	YResolution int
 }
 
-func InitialEmptyEvent()  Event{
+func InitialEmptyEvent() Event {
 	return Event{EventTime: time.Time{}}
 }

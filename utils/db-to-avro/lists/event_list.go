@@ -1,29 +1,29 @@
-package sequences
+package lists
 
 import (
-	"db-puller/puller/schema/event"
+	"db-puller/schema"
 	"time"
 )
 
 type EventList struct {
-	eventList []event.Event
+	eventList []schema.Event
 }
 
-func (events *EventList) Get() []event.Event {
+func (events *EventList) Get() []schema.Event {
 	return events.eventList
 }
 
-func (events *EventList) Append(event event.Event) {
+func (events *EventList) Append(event schema.Event) {
 	events.eventList = append(events.eventList, event)
 }
 
-func (events *EventList) Set(eventList []event.Event) {
+func (events *EventList) Set(eventList []schema.Event) {
 	events.eventList = eventList
 }
 
-func (events *EventList) Split(requiredEventType event.EventType, gapSeconds float64, minimumSequenceLength int) (splittedSequences *SequenceList) {
+func (events *EventList) Split(requiredEventType schema.EventType, gapSeconds float64, minimumSequenceLength int) (splittedSequences *SequenceList) {
 	var eventList = new(EventList)
-	var previousEvent = event.InitialEmptyEvent()
+	var previousEvent = schema.InitialEmptyEvent()
 
 	splittedSequences = new(SequenceList)
 
@@ -48,7 +48,7 @@ func (events *EventList) Split(requiredEventType event.EventType, gapSeconds flo
 	return
 }
 
-func isRequiredEvent(event event.Event, eventType event.EventType) bool {
+func isRequiredEvent(event schema.Event, eventType schema.EventType) bool {
 	return event.EventId == eventType.Id
 }
 
