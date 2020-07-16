@@ -9,9 +9,9 @@ import (
 
 func prepareEventList() (eventList []event.Event, firstSequence []event.Event, secondSequence []event.Event) {
 	firstSequenceTime := time.Now()
-	firstSequence = getEventsForIds([]int{1, 2, 3, 4, 5}, event.EventType{Id: 1}, firstSequenceTime, time.Millisecond * 900)
+	firstSequence = getEventsForIds([]int{1, 2, 3, 4, 5}, event.EventType{Id: 1}, firstSequenceTime, time.Millisecond*900)
 	secondSequenceTime := firstSequenceTime.Add(6 * time.Second)
-	secondSequence = getEventsForIds([]int{1, 2, 3}, event.EventType{Id: 1}, secondSequenceTime, time.Millisecond * 900)
+	secondSequence = getEventsForIds([]int{1, 2, 3}, event.EventType{Id: 1}, secondSequenceTime, time.Millisecond*900)
 	eventList = append(eventList, firstSequence...)
 	eventList = append(eventList, secondSequence...)
 	return
@@ -20,8 +20,8 @@ func prepareEventList() (eventList []event.Event, firstSequence []event.Event, s
 func getEventsForIds(ids []int, eventType event.EventType, beginTime time.Time, delayBetweenEvents time.Duration) (eventList []event.Event) {
 	for i := range ids {
 		eventList = append(eventList, event.Event{
-			Id: int64(i),
-			EventId: eventType.Id,
+			Id:        int64(i),
+			EventId:   eventType.Id,
 			EventTime: beginTime.Add(delayBetweenEvents),
 		})
 	}

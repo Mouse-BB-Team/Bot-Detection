@@ -16,10 +16,10 @@ func (sequenceList *SequenceList) Set(sequences []*EventList) {
 	sequenceList.sequenceList = sequences
 }
 
-func (sequenceList *SequenceList) Len() int{
+func (sequenceList *SequenceList) Len() int {
 	return len(sequenceList.sequenceList)
 }
 
-func (sequenceList *SequenceList) DropLastItem(){
-	sequenceList.sequenceList = sequenceList.sequenceList[:sequenceList.Len() - 1]
+func (sequenceList *SequenceList) DropLastItem() {
+	sequenceList.sequenceList = sequenceList.sequenceList[:sequenceList.Len()-1]
 }

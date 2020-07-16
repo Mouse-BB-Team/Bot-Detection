@@ -47,11 +47,11 @@ func (events *EventList) Split(requiredEventType event.EventType, gapSeconds flo
 	return
 }
 
-func isRequiredEvent(event event.Event, eventType event.EventType) bool{
+func isRequiredEvent(event event.Event, eventType event.EventType) bool {
 	return event.EventId == eventType.Id
 }
 
-func isPreviousSequenceToShort(sequence *EventList, length int) bool{
+func isPreviousSequenceToShort(sequence *EventList, length int) bool {
 	return len(sequence.eventList) < length
 }
 

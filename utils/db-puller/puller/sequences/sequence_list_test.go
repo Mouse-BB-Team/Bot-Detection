@@ -20,14 +20,14 @@ func TestSequenceList_Append(t *testing.T) {
 		require.Same(t, array[i], sequenceList.sequenceList[i])
 	}
 
-	require.Same(t, &elementToAppend,sequenceList.sequenceList[basicLength])
+	require.Same(t, &elementToAppend, sequenceList.sequenceList[basicLength])
 }
 
 func TestSequenceList_DropLastItem(t *testing.T) {
 	t.Run("should drop last item from inner array", func(t *testing.T) {
 		array := make([]*EventList, 5)
 		sequenceList := SequenceList{sequenceList: array}
-		want := array[:len(array) - 1]
+		want := array[:len(array)-1]
 
 		sequenceList.DropLastItem()
 		got := sequenceList.sequenceList
@@ -66,7 +66,7 @@ func TestSequenceList_Len(t *testing.T) {
 func TestSequenceList_Set(t *testing.T) {
 	t.Run("should set array in sequenceList struct", func(t *testing.T) {
 		want := make([]*EventList, 5)
-		for i, _ := range want {
+		for i := range want {
 			want[i] = new(EventList)
 		}
 		sequenceList := SequenceList{}
