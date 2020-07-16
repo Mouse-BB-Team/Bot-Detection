@@ -3,42 +3,9 @@ package sequences
 import (
 	"db-puller/puller/schema/event"
 	"testing"
+	"time"
 )
 
-//func TestSequenceList_dropLastItem(t *testing.T) {
-//	tests := []struct {
-//		name         string
-//		sequenceList SequenceList
-//		want         *SequenceList
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := tt.sequenceList.dropLastItem(); !reflect.DeepEqual(got, tt.want) {
-//				t.Errorf("dropLastItem() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-//
-//func TestSequenceList_len(t *testing.T) {
-//	tests := []struct {
-//		name         string
-//		sequenceList SequenceList
-//		want         int
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := tt.sequenceList.len(); got != tt.want {
-//				t.Errorf("len() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-//
 //func TestSequence_Split(t *testing.T) {
 //	type args struct {
 //		requiredEventType     event.EventType
@@ -47,11 +14,13 @@ import (
 //	}
 //	tests := []struct {
 //		name                  string
-//		events                Sequence
+//		events                EventList
 //		args                  args
 //		wantSplittedSequences *SequenceList
 //	}{
-//		// TODO: Add test cases.
+//		{
+//
+//		}
 //	}
 //	for _, tt := range tests {
 //		t.Run(tt.name, func(t *testing.T) {
@@ -61,32 +30,58 @@ import (
 //		})
 //	}
 //}
-//
-//func Test_isBeginOfNewSequence(t *testing.T) {
-//	type args struct {
-//		prev     time.Time
-//		curr     time.Time
-//		delayGap float64
-//	}
-//	tests := []struct {
-//		name string
-//		args args
-//		want bool
-//	}{
-//		// TODO: Add test cases.
-//	}
-//	for _, tt := range tests {
-//		t.Run(tt.name, func(t *testing.T) {
-//			if got := isBeginOfNewSequence(tt.args.prev, tt.args.curr, tt.args.delayGap); got != tt.want {
-//				t.Errorf("isBeginOfNewSequence() = %v, want %v", got, tt.want)
-//			}
-//		})
-//	}
-//}
-//
+
+func Test_isBeginOfNewSequence(t *testing.T) {
+	type args struct {
+		prev     time.Time
+		curr     time.Time
+		delayGap float64
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "should return that this is not new sequence (gap time equals expected time)",
+			args: args{
+				prev: time.Unix(1, 0),
+				curr: time.Unix(2,0),
+				delayGap: 1.0,
+			},
+			want: false,
+		},
+		{
+			name: "should return that this is not new sequence (gap time smaller than expected time)",
+			args: args{
+				prev: time.Unix(1, 0),
+				curr: time.Unix(1,50),
+				delayGap: 1.0,
+			},
+			want: false,
+		},
+		{
+			name: "should return that this is new sequence",
+			args: args{
+				prev: time.Unix(1, 0),
+				curr: time.Unix(2,1),
+				delayGap: 1.0,
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isBeginOfNewSequence(tt.args.prev, tt.args.curr, tt.args.delayGap); got != tt.want {
+				t.Errorf("isBeginOfNewSequence() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func Test_isPreviousSequenceToShort(t *testing.T) {
 	type args struct {
-		sequence *Sequence
+		sequence *EventList
 		length   int
 	}
 	tests := []struct {
@@ -97,7 +92,7 @@ func Test_isPreviousSequenceToShort(t *testing.T) {
 		{
 			name: "should return that sequence is to short",
 			args: args{
-				sequence: &(Sequence{eventList: make([]event.Event, 5)}),
+				sequence: &(EventList{eventList: make([]event.Event, 5)}),
 				length: 10,
 			},
 			want: true,
@@ -105,7 +100,7 @@ func Test_isPreviousSequenceToShort(t *testing.T) {
 		{
 			name: "should return that sequence has required minimum length",
 			args: args{
-				sequence: &(Sequence{eventList: make([]event.Event, 10)}),
+				sequence: &(EventList{eventList: make([]event.Event, 10)}),
 				length: 10,
 			},
 			want: false,
