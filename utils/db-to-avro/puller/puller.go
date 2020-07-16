@@ -26,14 +26,14 @@ func (puller *Puller) Close() {
 	utils.HandleError(puller.database.Close())
 }
 
-func (puller *Puller) Pull(eventType schema.EventType, gapDelay float64, minSequenceLength int, info bool) *map[schema.User]*lists.SequenceList {
+func (puller *Puller) Pull(splitArgs lists.SplitArgs, info bool) *map[schema.User]*lists.SequenceList {
 	users := getUsersFrom(puller.database)
 	sequenceList := make(map[schema.User]*lists.SequenceList)
 
 	for _, usr := range users {
 		sessions := getSessionsFor(usr, puller.database)
 
-		result := sessions.Split(eventType, gapDelay, minSequenceLength)
+		result := sessions.Split(splitArgs)
 
 		if result.Get() != nil {
 			sequenceList[usr] = result
