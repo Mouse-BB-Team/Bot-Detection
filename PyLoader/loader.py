@@ -14,8 +14,8 @@ class AvroLoader:
             json_schema = json.load(f)
         return json_schema
 
-    def read_avro_to_pandas_df(self, path_to_file, sort=True, sort_by='sequenceId'):
-        df = pdx.read_avro(path_to_file, self.__load_schema())
+    def read_avro_to_pandas_df(self, avro_file_path, sort=True, sort_by='sequenceId'):
+        df = pdx.read_avro(avro_file_path, self.__load_schema())
         return df.sort_values(sort_by) if sort else df
 
     @staticmethod
