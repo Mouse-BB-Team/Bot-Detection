@@ -27,8 +27,8 @@ func ParseArgs() (args Args) {
 	args.DBUser = flag.String("db-user", consts.DefaultDatabaseUser, "database user")
 	args.DBPassword = flag.String("db-password", consts.DefaultDatabasePassword, "database password")
 	args.EventTypeId = flag.Int("event-type", consts.DefaultEventTypeId, "event type id")
-	args.MinXResolution = flag.Int("min-x-resolution", consts.DefaultMinXResolution, "minimum x resolution")
-	args.MinYResolution = flag.Int("min-y-resolution", consts.DefaultMinYResolution, "minimum y resolution")
+	args.MinXResolution = flag.Int("min-x-resolution", consts.DefaultMinXResolution, "minimum x screen resolution")
+	args.MinYResolution = flag.Int("min-y-resolution", consts.DefaultMinYResolution, "minimum y screen resolution")
 	flag.Parse()
 	return
 }
