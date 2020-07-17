@@ -4,22 +4,23 @@
     "namespace": "BotDetectionData",
     "doc": "Mouse events schema",
     "fields": [
-        { "name": "userId", "type": "int" },
-        { "name": "sequenceId", "type": "int" },
-        { "name": "events", "type": {
+        { "name": "userId", "type": "int", "order": "ignore" },
+        { "name": "sequenceId", "type": "int", "order": "ignore" },
+        { "name": "events", "order": "ignore", "type": {
             "type": "array",
             "items": {
                 "type": "record",
+                "order": "ignore",
                 "name": "event",
                 "fields": [
-                    { "name": "id", "type": ["null", "int"] },
-                    { "name": "xCoordinate", "type": "int" },
-                    { "name": "yCoordinate", "type": "int" },
-                    { "name": "xResolution", "type": "int" },
-                    { "name": "yResolution", "type": "int" }
+                    { "name": "id", "type": ["null", "int"], "order": "ascending"},
+                    { "name": "xCoordinate", "type": "int", "order": "ignore"},
+                    { "name": "yCoordinate", "type": "int", "order": "ignore" },
+                    { "name": "xResolution", "type": "int", "order": "ignore"},
+                    { "name": "yResolution", "type": "int", "order": "ignore"}
                 ]
             }
         }},
-        { "name": "sequenceLength", "type": "int"}
+        { "name": "sequenceLength", "type": "int", "order": "ignore"}
     ]
 }
