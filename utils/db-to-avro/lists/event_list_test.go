@@ -2,6 +2,7 @@ package lists
 
 import (
 	"db-puller/schema"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -23,6 +24,8 @@ func getEventsForIds(ids []int, eventType schema.EventType, beginTime time.Time,
 			Id:        int64(i),
 			EventId:   eventType.Id,
 			EventTime: beginTime.Add(delayBetweenEvents),
+			XResolution: 1280,
+			YResolution: 800,
 		})
 	}
 	return
@@ -34,7 +37,15 @@ func TestSequence_Split(t *testing.T) {
 
 		eventList := EventList{eventList: events}
 
-		splitted := eventList.Split(schema.EventType{Id: 1}, 1.0, 1)
+		args := SplitArgs{
+			RequiredEventType: schema.EventType{Id: 1},
+			GapSeconds: 1.0,
+			MinimumSequenceLength: 1,
+			MinimumXResolution: 1280,
+			MinimumYResolution: 800,
+		}
+
+		splitted := eventList.Split(args)
 
 		require.ElementsMatch(t, firstSequence, (*splitted).sequenceList[0].eventList)
 		require.ElementsMatch(t, secondSequence, (*splitted).sequenceList[1].eventList)
@@ -98,3 +109,21 @@ func Test_isRequiredEvent(t *testing.T) {
 		require.False(t, isRequiredEvent(testEvent, expectedEventType))
 	})
 }
+
+func Test_isRequiredScreenResolution(t *testing.T) {
+	t.Run("should return that resolution is not proper", func(t *testing.T) {
+		xRes, yRes := 1280, 800
+		event := schema.Event{XResolution: xRes, YResolution: yRes}
+
+		xRes = 3000
+		assert.False(t, isRequiredScreenResolution(event, xRes, yRes))
+	})
+
+	t.Run("should return that resolution is proper", func(t *testing.T) {
+		xRes, yRes := 1280, 800
+		event := schema.Event{XResolution: xRes, YResolution: yRes}
+
+		assert.True(t, isRequiredScreenResolution(event, xRes, yRes))
+	})
+}
+

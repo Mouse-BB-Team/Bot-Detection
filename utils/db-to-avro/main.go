@@ -2,6 +2,7 @@ package main
 
 import (
 	"db-puller/cmd"
+	"db-puller/lists"
 	"db-puller/puller"
 	"db-puller/schema"
 	"fmt"
@@ -21,6 +22,14 @@ func main() {
 	dbPuller := puller.Puller{Options: dbOptions}
 	dbPuller.Connect()
 	defer dbPuller.Close()
-	dbPuller.Pull(schema.EventType{Id: int64(*args.EventTypeId)}, *args.GapTime, *args.MinSequenceLength, *args.InfoRequired)
 
+	splitArgs := lists.SplitArgs{
+		RequiredEventType: schema.EventType{Id: int64(*args.EventTypeId)},
+		GapSeconds: *args.GapTime,
+		MinimumSequenceLength: *args.MinSequenceLength,
+		MinimumXResolution: *args.MinXResolution,
+		MinimumYResolution: *args.MinYResolution,
+	}
+
+	dbPuller.Pull(splitArgs, *args.InfoRequired)
 }

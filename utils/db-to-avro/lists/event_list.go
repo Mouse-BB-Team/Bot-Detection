@@ -5,6 +5,14 @@ import (
 	"time"
 )
 
+type SplitArgs struct {
+	RequiredEventType     schema.EventType
+	GapSeconds            float64
+	MinimumSequenceLength int
+	MinimumXResolution    int
+	MinimumYResolution    int
+}
+
 type EventList struct {
 	eventList []schema.Event
 }
@@ -21,16 +29,16 @@ func (events *EventList) Set(eventList []schema.Event) {
 	events.eventList = eventList
 }
 
-func (events *EventList) Split(requiredEventType schema.EventType, gapSeconds float64, minimumSequenceLength int) (splittedSequences *SequenceList) {
+func (events *EventList) Split(args SplitArgs) (splittedSequences *SequenceList) {
 	var eventList = new(EventList)
 	var previousEvent = schema.InitialEmptyEvent()
 
 	splittedSequences = new(SequenceList)
 
 	for _, e := range events.Get() {
-		if isRequiredEvent(e, requiredEventType) {
-			if isBeginOfNewSequence(previousEvent.EventTime, e.EventTime, gapSeconds) {
-				if !isPreviousSequenceToShort(eventList, minimumSequenceLength) {
+		if isRequiredEvent(e, args.RequiredEventType) && isRequiredScreenResolution(e, args.MinimumXResolution, args.MinimumYResolution) {
+			if isBeginOfNewSequence(previousEvent.EventTime, e.EventTime, args.GapSeconds) {
+				if !isPreviousSequenceToShort(eventList, args.MinimumSequenceLength) {
 					splittedSequences.Append(eventList)
 				}
 				eventList = new(EventList)
@@ -41,7 +49,7 @@ func (events *EventList) Split(requiredEventType schema.EventType, gapSeconds fl
 		}
 	}
 
-	if !isPreviousSequenceToShort(eventList, minimumSequenceLength) {
+	if !isPreviousSequenceToShort(eventList, args.MinimumSequenceLength) {
 		splittedSequences.Append(eventList)
 	}
 
@@ -62,4 +70,8 @@ func isBeginOfNewSequence(prev time.Time, curr time.Time, delayGap float64) bool
 	} else {
 		return false
 	}
+}
+
+func isRequiredScreenResolution(event schema.Event, minX, minY int) bool {
+	return event.XResolution >= minX && event.YResolution >= minY
 }
