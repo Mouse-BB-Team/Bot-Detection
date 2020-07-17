@@ -7,23 +7,27 @@ import (
 	"os"
 )
 
-type AvroWriter struct {
+type Writer interface {
+	Write(sequence *AvroUser, filepath string)
+}
+
+type avroWriter struct {
 	writer  *avro.DatumWriter
 }
 
-func NewWriter(schemaPath string) *AvroWriter {
+func NewWriter(schemaPath string) *avroWriter {
 	schema, err := avro.ParseSchemaFile(schemaPath)
 	utils.HandleError(err)
 	datumWriter := avro.NewSpecificDatumWriter().SetSchema(schema)
-	return &AvroWriter{writer:  &datumWriter}
+	return &avroWriter{writer: &datumWriter}
 }
 
-func (writer *AvroWriter) Write(sequence *UserSequence, filepath string) {
+func (writer *avroWriter) Write(sequence *AvroUser, filepath string) {
 	writtenBytes := writeToBuffer(writer.writer, sequence)
 	saveToFile(writtenBytes, filepath)
 }
 
-func writeToBuffer(writer *avro.DatumWriter, sequence *UserSequence) (writerBuffer *bytes.Buffer){
+func writeToBuffer(writer *avro.DatumWriter, sequence *AvroUser) (writerBuffer *bytes.Buffer){
 	writerBuffer = new(bytes.Buffer)
 	encoder := avro.NewBinaryEncoder(writerBuffer)
 

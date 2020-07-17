@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"db-puller/consts"
+	"db-puller/utils"
 	"flag"
+	"os"
+	"path/filepath"
 )
 
 type Args struct {
@@ -16,6 +19,7 @@ type Args struct {
 	EventTypeId       *int
 	MinXResolution    *int
 	MinYResolution    *int
+	OutputPath        *string
 }
 
 func ParseArgs() (args Args) {
@@ -29,6 +33,13 @@ func ParseArgs() (args Args) {
 	args.EventTypeId = flag.Int("event-type", consts.DefaultEventTypeId, "event type id")
 	args.MinXResolution = flag.Int("min-x-resolution", consts.DefaultMinXResolution, "minimum x screen resolution")
 	args.MinYResolution = flag.Int("min-y-resolution", consts.DefaultMinYResolution, "minimum y screen resolution")
+	args.OutputPath = flag.String("output", getProgramPath(), "program output path")
 	flag.Parse()
 	return
+}
+
+func getProgramPath() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	utils.HandleError(err)
+	return dir
 }

@@ -1,2 +1,3 @@
 .idea/
 /utils/db-to-avro/.idea/
+/utils/db-to-avro/db-puller

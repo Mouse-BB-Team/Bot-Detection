@@ -2,6 +2,7 @@ package avro_writer
 
 import (
 	"bytes"
+	"db-puller/consts"
 	"db-puller/utils"
 	"encoding/binary"
 	"fmt"
@@ -15,11 +16,9 @@ import (
 	"testing"
 )
 
-const DefaultSchemaPath = "../../../config/avro_schema.json"
-
 func TestNewWriter(t *testing.T) {
-	t.Run("should return AvroWriter with set DatumWriter inside structure", func(t *testing.T) {
-		writer := NewWriter(DefaultSchemaPath)
+	t.Run("should return avroWriter with set DatumWriter inside structure", func(t *testing.T) {
+		writer := NewWriter(consts.DefaultSchemaPath)
 		require.NotNil(t, writer.writer)
 	})
 
@@ -58,8 +57,8 @@ func Test_saveToFile(t *testing.T) {
 func Test_writeToBuffer(t *testing.T) {
 	t.Run("should save structure as avro bytes to buffer", func(t *testing.T) {
 
-		events := make([]*SequenceEvent, 1)
-		events[0] = &SequenceEvent{
+		events := make([]*AvroEvent, 1)
+		events[0] = &AvroEvent{
 			Id: 3,
 			XCoordinate: 4,
 			YCoordinate: 5,
@@ -67,14 +66,14 @@ func Test_writeToBuffer(t *testing.T) {
 			YResolution: 7,
 		}
 
-		savedStructure := &UserSequence{
+		savedStructure := &AvroUser{
 			Id: 1,
 			SequenceId: 2,
 			Events: events,
 			SequenceLength: 8,
 		}
 
-		schema, err := avro.ParseSchemaFile(DefaultSchemaPath)
+		schema, err := avro.ParseSchemaFile(consts.DefaultSchemaPath)
 		utils.HandleError(err)
 
 		writer := avro.NewSpecificDatumWriter().SetSchema(schema)
@@ -86,7 +85,7 @@ func Test_writeToBuffer(t *testing.T) {
 		reader := avro.NewSpecificDatumReader()
 		reader.SetSchema(schema)
 
-		readStructure := new(UserSequence)
+		readStructure := new(AvroUser)
 
 		err = reader.Read(readStructure, decoder)
 		utils.HandleError(err)
