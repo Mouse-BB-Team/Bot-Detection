@@ -5,7 +5,7 @@
     "doc": "Mouse events schema",
     "fields": [
         { "name": "userId", "type": "int", "order": "ignore" },
-        { "name": "sequenceId", "type": "int", "order": "ascending" },
+        { "name": "sequenceId", "type": "int", "order": "ignore" },
         { "name": "events", "order": "ignore", "type": {
             "type": "array",
             "items": {
