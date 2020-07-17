@@ -6,7 +6,9 @@ import json
 
 
 class AvroLoader:
-    def __init__(self, schema_config_path=Path(__file__).parent.parent.absolute().joinpath('config/avro_schema.json')):
+    DEFAULT_SCHEMA_PATH = Path(__file__).parent.parent.parent.absolute().joinpath('config/avro_schema.json')
+
+    def __init__(self, schema_config_path=DEFAULT_SCHEMA_PATH):
         self.schema_config_path = schema_config_path
 
     def __load_schema(self):

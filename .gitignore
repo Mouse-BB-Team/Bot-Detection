@@ -1,4 +1,4 @@
-PyLoader/tests/test/
 **/__pycache__/
 .idea/
 /utils/db-to-avro/.idea/
+**/.pytest_cache/
