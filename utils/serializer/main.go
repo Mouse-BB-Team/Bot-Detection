@@ -13,7 +13,10 @@ import (
 )
 
 func main() {
+	log.Println("Starting serializer ...")
 	args := cmd.ParseArgs()
+
+	log.Println(fmt.Sprintf("Pulling data from database: %s, as user: %s", *args.DBName, *args.DBUser))
 
 	dbOptions := &pg.Options{
 		Addr:     fmt.Sprintf(":%d", *args.DBPort),
@@ -44,6 +47,8 @@ func main() {
 		sequenceMap, _, _ = dbPuller.Pull(splitArgs)
 	}
 
+	log.Println("Data has been pulled")
+
 	rootDir := fileutils.CreateDir(consts.OutputDirName, *args.OutputPath)
 
 	for usr, list := range *sequenceMap {
@@ -53,4 +58,7 @@ func main() {
 			fileutils.Serialize(usr, seqId, seq.Get(), usrDir)
 		}
 	}
+
+	log.Println("Serialization complete")
+	log.Println(fmt.Sprintf("Data has been saved in: %s", rootDir))
 }

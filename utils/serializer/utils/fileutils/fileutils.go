@@ -3,6 +3,7 @@ package fileutils
 import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
+	"log"
 	"os"
 	"serializer/consts"
 	"serializer/proto/protoparser"
@@ -11,11 +12,13 @@ import (
 )
 
 func Serialize(user schema.User, sequenceId int, events []schema.Event, usrDir string) {
+	log.Println(fmt.Sprintf("Serializing data for user %d with sequence %d...", user.Id, sequenceId))
 	userSequence := protoparser.ParseToUserSequence(user, sequenceId, events)
 	marshal, err := proto.Marshal(userSequence)
 	utils.HandleError(err)
 
 	SaveToFile(marshal, getFilePathWith(user.Id, sequenceId, usrDir))
+	log.Println(fmt.Sprintf("Serialized data for user %d with sequence %d", user.Id, sequenceId))
 }
 
 func SaveToFile(buffer []byte, filepath string) {
