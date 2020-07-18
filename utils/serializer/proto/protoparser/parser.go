@@ -5,19 +5,19 @@ import (
 	"serializer/schema"
 )
 
-func parseEventToProtoEvent(event schema.Event) (avroSequence protoschema.Event) {
-	avroSequence.Id = int32(event.Id)
-	avroSequence.XCoordinate = int32(event.XCoordinate)
-	avroSequence.YCoordinate = int32(event.YCoordinate)
-	avroSequence.XResolution = int32(event.XResolution)
-	avroSequence.YResolution = int32(event.YResolution)
+func parseEventToProtoEvent(event schema.Event) (protoEvent protoschema.Event) {
+	protoEvent.Id = int32(event.Id)
+	protoEvent.XCoordinate = int32(event.XCoordinate)
+	protoEvent.YCoordinate = int32(event.YCoordinate)
+	protoEvent.XResolution = int32(event.XResolution)
+	protoEvent.YResolution = int32(event.YResolution)
 	return
 }
 
-func parseEventsToProtoEvents(events []schema.Event) (avroEvents []*protoschema.Event) {
+func parseEventsToProtoEvents(events []schema.Event) (protoEvents []*protoschema.Event) {
 	for _, el := range events {
 		parsedElement := parseEventToProtoEvent(el)
-		avroEvents = append(avroEvents, &parsedElement)
+		protoEvents = append(protoEvents, &parsedElement)
 	}
 	return
 }
