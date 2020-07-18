@@ -12,20 +12,30 @@ import (
 var whereArgument = fmt.Sprintf("%s = ?", consts.UserIdAttribute)
 var orderArgument = fmt.Sprintf("%s ASC", consts.EventTimeAttribute)
 
-type Puller struct {
+type Puller interface {
+	Connect()
+	Close()
+	Pull(args lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int)
+}
+
+type DBPuller struct {
 	Options  *pg.Options
 	database *pg.DB
 }
 
-func (puller *Puller) Connect() {
+func NewDBPuller(options *pg.Options) Puller {
+	return &DBPuller{Options: options}
+}
+
+func (puller *DBPuller) Connect() {
 	puller.database = pg.Connect(puller.Options)
 }
 
-func (puller *Puller) Close() {
+func (puller *DBPuller) Close() {
 	utils.HandleError(puller.database.Close())
 }
 
-func (puller *Puller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
+func (puller *DBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
 	users := getUsersFrom(puller.database)
 	sequenceList := make(map[schema.User]*lists.SequenceList)
 

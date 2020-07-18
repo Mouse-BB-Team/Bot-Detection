@@ -25,7 +25,7 @@ func main() {
 		Database: *args.DBName,
 	}
 
-	dbPuller := puller.Puller{Options: dbOptions}
+	dbPuller := puller.NewDBPuller(dbOptions)
 	dbPuller.Connect()
 	defer dbPuller.Close()
 
