@@ -14,5 +14,4 @@ const (
 	DefaultEventTypeId       = 1
 	DefaultMinXResolution    = 1280
 	DefaultMinYResolution    = 800
-	DefaultSchemaPath        = "../../config/avro_schema.json"
 )

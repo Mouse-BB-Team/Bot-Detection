@@ -7,7 +7,6 @@ import (
 	"db-puller/utils"
 	"fmt"
 	"github.com/go-pg/pg"
-	"log"
 )
 
 var whereArgument = fmt.Sprintf("%s = ?", consts.UserIdAttribute)
@@ -26,7 +25,7 @@ func (puller *Puller) Close() {
 	utils.HandleError(puller.database.Close())
 }
 
-func (puller *Puller) Pull(splitArgs lists.SplitArgs, info bool) *map[schema.User]*lists.SequenceList {
+func (puller *Puller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
 	users := getUsersFrom(puller.database)
 	sequenceList := make(map[schema.User]*lists.SequenceList)
 
@@ -40,11 +39,7 @@ func (puller *Puller) Pull(splitArgs lists.SplitArgs, info bool) *map[schema.Use
 		}
 	}
 
-	if info {
-		printInfo(&sequenceList)
-	}
-
-	return &sequenceList
+	return &sequenceList, countUsers(&sequenceList), countSequences(&sequenceList)
 }
 
 func getUsersFrom(db *pg.DB) (users []schema.User) {
@@ -61,12 +56,16 @@ func getSessionsFor(user schema.User, db *pg.DB) (sessions lists.EventList) {
 	return
 }
 
-func printInfo(result *map[schema.User]*lists.SequenceList) {
+func countUsers(result *map[schema.User]*lists.SequenceList) int {
+	return len(*result)
+}
+
+func countSequences(result *map[schema.User]*lists.SequenceList) int {
 	count := 0
 
 	for _, v := range *result {
 		count += len(v.Get())
 	}
 
-	log.Println(fmt.Sprintf("Total sequences count %d for %d users", count, len(*result)))
+	return count
 }
