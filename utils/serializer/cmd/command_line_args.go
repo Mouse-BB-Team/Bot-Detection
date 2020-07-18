@@ -20,6 +20,7 @@ type Args struct {
 	MinXResolution    *int
 	MinYResolution    *int
 	OutputPath        *string
+	OneUserOnly 	  *string
 }
 
 func ParseArgs() (args Args) {
@@ -34,6 +35,7 @@ func ParseArgs() (args Args) {
 	args.MinXResolution = flag.Int("min-x-resolution", consts.DefaultMinXResolution, "minimum x screen resolution")
 	args.MinYResolution = flag.Int("min-y-resolution", consts.DefaultMinYResolution, "minimum y screen resolution")
 	args.OutputPath = flag.String("output", getProgramPath(), "program output path")
+	args.OneUserOnly = flag.String("one-user", consts.AllUserIndicator, "serialize sequence only for only one user id")
 	flag.Parse()
 	return
 }

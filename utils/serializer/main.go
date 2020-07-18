@@ -10,6 +10,7 @@ import (
 	"serializer/puller"
 	"serializer/schema"
 	"serializer/utils/fileutils"
+	"strconv"
 )
 
 func main() {
@@ -25,7 +26,8 @@ func main() {
 		Database: *args.DBName,
 	}
 
-	dbPuller := puller.NewDBPuller(dbOptions)
+	dbPuller := getProperPuller(dbOptions, *args.OneUserOnly)
+
 	dbPuller.Connect()
 	defer dbPuller.Close()
 
@@ -61,4 +63,18 @@ func main() {
 
 	log.Println("Serialization complete")
 	log.Println(fmt.Sprintf("Data has been saved in: %s", rootDir))
+}
+
+func getProperPuller(dbOptions *pg.Options, oneUserOnly string) (dbPuller puller.Puller) {
+	if oneUserOnly == consts.AllUserIndicator {
+		dbPuller = puller.NewDBPuller(dbOptions)
+	} else {
+		userId, err := strconv.Atoi(oneUserOnly)
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Provided argument should be number: %s", oneUserOnly))
+			return
+		}
+		dbPuller = puller.NewDBPullerForOneUser(dbOptions, userId)
+	}
+	return
 }

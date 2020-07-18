@@ -14,4 +14,5 @@ const (
 	DefaultEventTypeId       = 1
 	DefaultMinXResolution    = 1280
 	DefaultMinYResolution    = 800
+	AllUserIndicator         = "all"
 )
