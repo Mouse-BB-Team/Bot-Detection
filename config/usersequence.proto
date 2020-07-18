@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = ".;protoschema";
+
+message UserSequence {
+  int32 userId = 1;
+  int32 sequenceId = 2;
+  repeated Event events = 3;
+  int32 sequenceLength = 4;
+
+}
+message Event {
+  int32 id = 1;
+  int32 xCoordinate = 2;
+  int32 yCoordinate = 3;
+  int32 xResolution = 4;
+  int32 yResolution = 5;
+}
