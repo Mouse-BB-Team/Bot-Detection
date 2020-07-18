@@ -1,9 +1,9 @@
 package lists
 
 import (
-	"db-puller/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"serializer/schema"
 	"testing"
 	"time"
 )
@@ -21,9 +21,9 @@ func prepareEventList() (eventList []schema.Event, firstSequence []schema.Event,
 func getEventsForIds(ids []int, eventType schema.EventType, beginTime time.Time, delayBetweenEvents time.Duration) (eventList []schema.Event) {
 	for i := range ids {
 		eventList = append(eventList, schema.Event{
-			Id:        int64(i),
-			EventId:   eventType.Id,
-			EventTime: beginTime.Add(delayBetweenEvents),
+			Id:          int64(i),
+			EventId:     eventType.Id,
+			EventTime:   beginTime.Add(delayBetweenEvents),
 			XResolution: 1280,
 			YResolution: 800,
 		})
@@ -38,11 +38,11 @@ func TestSequence_Split(t *testing.T) {
 		eventList := EventList{eventList: events}
 
 		args := SplitArgs{
-			RequiredEventType: schema.EventType{Id: 1},
-			GapSeconds: 1.0,
+			RequiredEventType:     schema.EventType{Id: 1},
+			GapSeconds:            1.0,
 			MinimumSequenceLength: 1,
-			MinimumXResolution: 1280,
-			MinimumYResolution: 800,
+			MinimumXResolution:    1280,
+			MinimumYResolution:    800,
 		}
 
 		splitted := eventList.Split(args)
@@ -126,4 +126,3 @@ func Test_isRequiredScreenResolution(t *testing.T) {
 		assert.True(t, isRequiredScreenResolution(event, xRes, yRes))
 	})
 }
-

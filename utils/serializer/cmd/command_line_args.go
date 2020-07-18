@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"db-puller/consts"
-	"db-puller/utils"
 	"flag"
 	"os"
 	"path/filepath"
+	"serializer/consts"
+	"serializer/utils"
 )
 
 type Args struct {

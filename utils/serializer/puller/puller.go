@@ -1,12 +1,12 @@
 package puller
 
 import (
-	"db-puller/consts"
-	"db-puller/lists"
-	"db-puller/schema"
-	"db-puller/utils"
 	"fmt"
 	"github.com/go-pg/pg"
+	"serializer/consts"
+	"serializer/lists"
+	"serializer/schema"
+	"serializer/utils"
 )
 
 var whereArgument = fmt.Sprintf("%s = ?", consts.UserIdAttribute)

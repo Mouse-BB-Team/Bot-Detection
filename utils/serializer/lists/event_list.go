@@ -1,7 +1,7 @@
 package lists
 
 import (
-	"db-puller/schema"
+	"serializer/schema"
 	"time"
 )
 

@@ -1,15 +1,15 @@
 package main
 
 import (
-	"db-puller/cmd"
-	"db-puller/consts"
-	"db-puller/lists"
-	"db-puller/puller"
-	"db-puller/schema"
-	"db-puller/utils/fileutils"
 	"fmt"
 	"github.com/go-pg/pg"
 	"log"
+	"serializer/cmd"
+	"serializer/consts"
+	"serializer/lists"
+	"serializer/puller"
+	"serializer/schema"
+	"serializer/utils/fileutils"
 )
 
 func main() {
@@ -27,11 +27,11 @@ func main() {
 	defer dbPuller.Close()
 
 	splitArgs := lists.SplitArgs{
-		RequiredEventType: schema.EventType{Id: int64(*args.EventTypeId)},
-		GapSeconds: *args.GapTime,
+		RequiredEventType:     schema.EventType{Id: int64(*args.EventTypeId)},
+		GapSeconds:            *args.GapTime,
 		MinimumSequenceLength: *args.MinSequenceLength,
-		MinimumXResolution: *args.MinXResolution,
-		MinimumYResolution: *args.MinYResolution,
+		MinimumXResolution:    *args.MinXResolution,
+		MinimumYResolution:    *args.MinYResolution,
 	}
 
 	var sequenceMap *map[schema.User]*lists.SequenceList
@@ -54,4 +54,3 @@ func main() {
 		}
 	}
 }
-

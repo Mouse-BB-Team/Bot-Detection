@@ -1,13 +1,13 @@
 package fileutils
 
 import (
-	"db-puller/consts"
-	"db-puller/proto/protoparser"
-	"db-puller/schema"
-	"db-puller/utils"
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"os"
+	"serializer/consts"
+	"serializer/proto/protoparser"
+	"serializer/schema"
+	"serializer/utils"
 )
 
 func Serialize(user schema.User, sequenceId int, events []schema.Event, usrDir string) {

@@ -1,4 +1,4 @@
-module db-puller
+module serializer
 
 go 1.14
 
@@ -10,7 +10,6 @@ require (
 	github.com/onsi/ginkgo v1.14.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	google.golang.org/protobuf v1.23.0
-	gopkg.in/avro.v0 v0.0.0-20171217001914-a730b5802183
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	mellium.im/sasl v0.2.1 // indirect
 )

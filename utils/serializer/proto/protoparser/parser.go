@@ -1,8 +1,8 @@
 package protoparser
 
 import (
-	"db-puller/proto"
-	"db-puller/schema"
+	"serializer/proto"
+	"serializer/schema"
 )
 
 func parseEventToProtoEvent(event schema.Event) (avroSequence protoschema.Event) {
