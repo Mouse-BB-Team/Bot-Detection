@@ -23,50 +23,16 @@ type DBPuller struct {
 	database *pg.DB
 }
 
-type OneUserDBPuller struct {
-	dbPuller *DBPuller
-	userId   int
-}
-
 func NewDBPuller(options *pg.Options) Puller {
 	return &DBPuller{Options: options}
-}
-
-func NewDBPullerForOneUser(options *pg.Options, userId int) Puller {
-	dbPuller := &DBPuller{Options: options}
-	return &OneUserDBPuller{dbPuller: dbPuller}
-}
-
-func (puller *OneUserDBPuller) Connect() {
-	puller.dbPuller.database = pg.Connect(puller.dbPuller.Options)
 }
 
 func (puller *DBPuller) Connect() {
 	puller.database = pg.Connect(puller.Options)
 }
 
-func (puller *OneUserDBPuller) Close() {
-	utils.HandleError(puller.dbPuller.database.Close())
-}
-
 func (puller *DBPuller) Close() {
 	utils.HandleError(puller.database.Close())
-}
-
-func (puller *OneUserDBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
-	sequenceList := make(map[schema.User]*lists.SequenceList)
-
-	usr := schema.User{Id: int64(puller.userId)}
-
-	sessions := getSessionsFor(usr, puller.dbPuller.database)
-
-	result := sessions.Split(splitArgs)
-
-	if result.Get() != nil {
-		sequenceList[usr] = result
-	}
-
-	return &sequenceList, 1, countSequences(&sequenceList)
 }
 
 func (puller *DBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
@@ -84,6 +50,40 @@ func (puller *DBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists
 	}
 
 	return &sequenceList, countUsers(&sequenceList), countSequences(&sequenceList)
+}
+
+type OneUserDBPuller struct {
+	dbPuller *DBPuller
+	userId   int
+}
+
+func NewDBPullerForOneUser(options *pg.Options, userId int) Puller {
+	dbPuller := &DBPuller{Options: options}
+	return &OneUserDBPuller{dbPuller: dbPuller}
+}
+
+func (puller *OneUserDBPuller) Connect() {
+	puller.dbPuller.database = pg.Connect(puller.dbPuller.Options)
+}
+
+func (puller *OneUserDBPuller) Close() {
+	utils.HandleError(puller.dbPuller.database.Close())
+}
+
+func (puller *OneUserDBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int) {
+	sequenceList := make(map[schema.User]*lists.SequenceList)
+
+	usr := schema.User{Id: int64(puller.userId)}
+
+	sessions := getSessionsFor(usr, puller.dbPuller.database)
+
+	result := sessions.Split(splitArgs)
+
+	if result.Get() != nil {
+		sequenceList[usr] = result
+	}
+
+	return &sequenceList, 1, countSequences(&sequenceList)
 }
 
 func getUsersFrom(db *pg.DB) (users []schema.User) {
