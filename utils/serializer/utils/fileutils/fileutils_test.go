@@ -21,7 +21,7 @@ func TestCreateDir(t *testing.T) {
 		dirName := fmt.Sprintf("test-dir-%d", random)
 		createdDirPath := CreateDir(dirName, tmpDir)
 
-		require.Equal(t, tmpDir + "/" + dirName, createdDirPath)
+		require.Equal(t, tmpDir+"/"+dirName, createdDirPath)
 		require.DirExists(t, createdDirPath)
 
 		cleanUp(createdDirPath)

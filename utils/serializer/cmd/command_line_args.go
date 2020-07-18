@@ -20,7 +20,7 @@ type Args struct {
 	MinXResolution    *int
 	MinYResolution    *int
 	OutputPath        *string
-	OneUserOnly 	  *string
+	OneUserOnly       *string
 }
 
 func ParseArgs() (args Args) {
