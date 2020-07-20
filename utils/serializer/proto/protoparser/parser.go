@@ -1,8 +1,8 @@
 package protoparser
 
 import (
-	"serializer/proto"
-	"serializer/schema"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/proto"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
 )
 
 func parseEventToProtoEvent(event schema.Event) (protoEvent protoschema.Event) {

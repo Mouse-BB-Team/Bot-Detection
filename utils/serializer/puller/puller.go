@@ -2,11 +2,11 @@ package puller
 
 import (
 	"fmt"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/consts"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/lists"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/utils"
 	"github.com/go-pg/pg"
-	"serializer/consts"
-	"serializer/lists"
-	"serializer/schema"
-	"serializer/utils"
 )
 
 var whereArgument = fmt.Sprintf("%s = ?", consts.UserIdAttribute)
@@ -16,6 +16,7 @@ type Puller interface {
 	Connect()
 	Close()
 	Pull(args lists.SplitArgs) (*map[schema.User]*lists.SequenceList, int, int)
+	getDatabase() *pg.DB
 }
 
 type DBPuller struct {
@@ -40,16 +41,14 @@ func (puller *DBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User]*lists
 	sequenceList := make(map[schema.User]*lists.SequenceList)
 
 	for _, usr := range users {
-		sessions := getSessionsFor(usr, puller.database)
-
-		result := sessions.Split(splitArgs)
-
-		if result.Get() != nil {
-			sequenceList[usr] = result
-		}
+		pullForUser(usr, splitArgs, puller, &sequenceList)
 	}
 
 	return &sequenceList, countUsers(&sequenceList), countSequences(&sequenceList)
+}
+
+func (puller *DBPuller) getDatabase() *pg.DB{
+	return puller.database
 }
 
 type OneUserDBPuller struct {
@@ -75,15 +74,23 @@ func (puller *OneUserDBPuller) Pull(splitArgs lists.SplitArgs) (*map[schema.User
 
 	usr := schema.User{Id: int64(puller.userId)}
 
-	sessions := getSessionsFor(usr, puller.dbPuller.database)
+	pullForUser(usr, splitArgs, puller, &sequenceList)
+
+	return &sequenceList, 1, countSequences(&sequenceList)
+}
+
+func (puller *OneUserDBPuller) getDatabase() *pg.DB {
+	return puller.dbPuller.database
+}
+
+func pullForUser(user schema.User, splitArgs lists.SplitArgs, puller Puller, sequenceList *map[schema.User]*lists.SequenceList) {
+	sessions := getSessionsFor(user, puller.getDatabase())
 
 	result := sessions.Split(splitArgs)
 
 	if result.Get() != nil {
-		sequenceList[usr] = result
+		(*sequenceList)[user] = result
 	}
-
-	return &sequenceList, 1, countSequences(&sequenceList)
 }
 
 func getUsersFrom(db *pg.DB) (users []schema.User) {

@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/cmd"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/consts"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/lists"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/puller"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/utils/fileutils"
 	"github.com/go-pg/pg"
 	"log"
-	"serializer/cmd"
-	"serializer/consts"
-	"serializer/lists"
-	"serializer/puller"
-	"serializer/schema"
-	"serializer/utils/fileutils"
 	"strconv"
 )
 

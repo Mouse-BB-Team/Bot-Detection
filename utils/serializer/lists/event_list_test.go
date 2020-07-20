@@ -1,9 +1,9 @@
 package lists
 
 import (
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"serializer/schema"
 	"testing"
 	"time"
 )

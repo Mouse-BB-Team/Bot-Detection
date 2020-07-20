@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"flag"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/consts"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/utils"
 	"os"
 	"path/filepath"
-	"serializer/consts"
-	"serializer/utils"
 )
 
 type Args struct {

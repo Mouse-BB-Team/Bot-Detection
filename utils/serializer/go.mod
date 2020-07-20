@@ -1,4 +1,4 @@
-module serializer
+module github.com/Mouse-BB-Team/Bot-Detection/utils/serializer
 
 go 1.14
 

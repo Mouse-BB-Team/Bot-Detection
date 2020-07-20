@@ -2,13 +2,13 @@ package fileutils
 
 import (
 	"fmt"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/consts"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/proto/protoparser"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/utils"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"os"
-	"serializer/consts"
-	"serializer/proto/protoparser"
-	"serializer/schema"
-	"serializer/utils"
 )
 
 func Serialize(user schema.User, sequenceId int, events []schema.Event, usrDir string) {

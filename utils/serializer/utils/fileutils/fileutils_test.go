@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/consts"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/utils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"os"
 	"reflect"
-	"serializer/consts"
-	"serializer/utils"
 	"testing"
 )
 
