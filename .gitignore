@@ -1,4 +1,6 @@
 **/__pycache__/
 .idea/
-/utils/db-to-avro/.idea/
+/utils/serializer/.idea/
+/utils/serializer/serializer
+/utils/serializer/output/
 **/.pytest_cache/

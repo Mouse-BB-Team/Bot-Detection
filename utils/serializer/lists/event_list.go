@@ -1,7 +1,7 @@
 package lists
 
 import (
-	"db-puller/schema"
+	"github.com/Mouse-BB-Team/Bot-Detection/utils/serializer/schema"
 	"time"
 )
 
