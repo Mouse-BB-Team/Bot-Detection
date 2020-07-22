@@ -8,7 +8,7 @@ INVALID_PATH = "some/wrong/path"
 
 
 @pytest.mark.parametrize('filepath', ["test_file.pb", "test_file_1.txt", "test_file_2.xml"])
-def test_should_return_single_df_sequence(filepath):
+def test_should_return_single_df_sequence_regardless_file_extension(filepath):
     loader = ProtoLoader(PROTOFILES_DIR_PATH)
     sequence = loader.get_single_sequence(filepath)
     assert isinstance(sequence, pd.DataFrame)
