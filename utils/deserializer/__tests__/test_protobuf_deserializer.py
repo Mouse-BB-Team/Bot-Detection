@@ -1,5 +1,3 @@
-import sys
-
 from utils.deserializer.protobuf_deserializer import ProtoLoader
 from pathlib import Path
 import pandas as pd
