@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 PROTOFILES_DIR_PATH = Path(__file__).parent.joinpath("protofilesdir").absolute().__str__()
+INVALID_PATH = "some/wrong/path"
 
 
 @pytest.mark.parametrize('filepath', ["test_file.pb", "test_file_1.txt", "test_file_2.xml"])
@@ -26,13 +27,13 @@ def test_should_return_correct_length_of_seq_list():
 
 
 def test_should_return_empty_list_when_directory_empty():
-    loader = ProtoLoader(PROTOFILES_DIR_PATH + "/wrong/path")
+    loader = ProtoLoader(PROTOFILES_DIR_PATH + INVALID_PATH)
     seq_list = loader.get_list_of_sequences()
     assert len(seq_list) == 0
 
 
 def test_should_check_for_list_when_directory_empty():
-    loader = ProtoLoader(PROTOFILES_DIR_PATH + "/wrong/path")
+    loader = ProtoLoader(PROTOFILES_DIR_PATH + INVALID_PATH)
     seq_list = loader.get_list_of_sequences()
     assert isinstance(seq_list, list)
 
