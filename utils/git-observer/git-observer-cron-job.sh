@@ -19,5 +19,5 @@ if [[ $isAlreadyUpToDate -eq 1 ]]; then
     exit 0
 else
     echo "found new commit"
-    ./$scriptToRun
+    sh $scriptToRun
 fi
