@@ -15,7 +15,7 @@ if [[ $? -ne 0 ]]; then
     exit 127
 fi
 
-isAlreadyUpToDate=$(echo $pullResult | grep "Already up to date." | wc -l )
+isAlreadyUpToDate=$(echo $pullResult | grep "Already up-to-date." | wc -l )
 
 if [[ $isAlreadyUpToDate -eq 1 ]]; then
     echo "no new commits"

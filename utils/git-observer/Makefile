@@ -1,4 +1,4 @@
-branch = test_brdsaanch
+branch := $(shell git rev-parse --abbrev-ref HEAD)
 jobToExecute =  'test.sh'
 periodInMinutes = 1
 current_dir := $(PWD)
@@ -7,7 +7,7 @@ all: cache_git_credentials make_executive_scripts add_cron_job
 
 cache_git_credentials:
 	@echo "Caching git credentials"
-	git config --global credential.helper cache
+	git config credential.helper store
 
 make_executive_scripts:
 	@echo "Making executive scripts"
