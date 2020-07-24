@@ -4,6 +4,9 @@ git fetch
 
 branchName=$1
 scriptToRun=$2
+repoDirectory=$3
+
+cd $repoDirectory
 
 pullResult=$(git pull origin $branchName)
 
