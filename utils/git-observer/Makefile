@@ -1,19 +1,14 @@
-branch := $(shell git rev-parse --abbrev-ref HEAD)
-jobToExecute =  'example.sh'
-periodInMinutes = 1
-current_dir := $(PWD)
-
-all: cache_git_credentials make_executive_scripts add_cron_job
-
-cache_git_credentials:
-	@echo "Caching git credentials"
-	git config credential.helper store
-
-make_executive_scripts:
-	@echo "Making executive scripts"
-	chmod +x git-observer-cron-job.sh
-	chmod +x add-cron-job.sh
-
-add_cron_job:
-	@echo "Adding git observer job to cron"
-	./add-cron-job.sh $(periodInMinutes) $(current_dir) $(branch) $(jobToExecute)
+set-connection-with-PLGrid:
+	@echo "What is PLGrid username?: "; \
+    read USERNAME; \
+    ssh-copy-id $$USERNAME@pro.cyfronet.pl; \
+	echo "export PLG_USERNAME=$$USERNAME" >> ~/.bashrc; \
+	echo "What is the name of branch that you want to observe?: "; \
+	read BRANCH; \
+	ssh $$USERNAME@pro.cyfronet.pl "echo 'export OBSERVED_BRANCH=$$BRANCH' >> ~/.bashrc && source ~/.bashrc && \
+	echo SSH key generation. In all steps press ENTER!!! && \
+	ssh-keygen -t rsa -b 2048 && \
+	cat ~/.ssh/id_rsa.pub && \
+	echo Copy above ssh key to your github account. If you finish, press any key ... && \
+	read && \
+	git clone git@github.com:Mouse-BB-Team/Bot-Detection.git";
