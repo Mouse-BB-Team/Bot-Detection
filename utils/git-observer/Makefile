@@ -1,5 +1,12 @@
+all: make-all-scripts-executable set-connection-with-PLGrid
+
+make-all-scripts-executable:
+	chmod +x run-commit-execution.sh
+	chmod +x run-plgrid-job.sh
+	chmod +x git-push-alias.sh
+
 set-connection-with-PLGrid:
-	@echo "What is PLGrid username?: "; \
+	@echo "What is your PLGrid username?: "; \
 	read USERNAME; \
 	ssh-copy-id $$USERNAME@pro.cyfronet.pl; \
 	echo "export PLG_USERNAME=$$USERNAME" >> ~/.bashrc; \
@@ -12,4 +19,5 @@ set-connection-with-PLGrid:
 	cat ~/.ssh/id_rsa.pub && \
 	echo Copy above ssh key to your github account. If you finish, press any key ... && \
 	read && \
-	git clone git@github.com:Mouse-BB-Team/Bot-Detection.git";
+	git clone git@github.com:Mouse-BB-Team/Bot-Detection.git && \
+	chmod +x ./Bot-Detection/utils/git-observer/run-plgrid-job.sh";
