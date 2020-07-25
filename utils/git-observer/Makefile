@@ -1,5 +1,5 @@
 branch := $(shell git rev-parse --abbrev-ref HEAD)
-jobToExecute =  'test.sh'
+jobToExecute =  'example.sh'
 periodInMinutes = 1
 current_dir := $(PWD)
 
