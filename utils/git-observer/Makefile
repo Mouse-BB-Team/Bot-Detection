@@ -1,7 +1,7 @@
 set-connection-with-PLGrid:
 	@echo "What is PLGrid username?: "; \
-    read USERNAME; \
-    ssh-copy-id $$USERNAME@pro.cyfronet.pl; \
+	read USERNAME; \
+	ssh-copy-id $$USERNAME@pro.cyfronet.pl; \
 	echo "export PLG_USERNAME=$$USERNAME" >> ~/.bashrc; \
 	echo "export PLG_USERNAME=$$USERNAME" >> ~/.zshrc; \
 	echo "What is the name of branch that you want to observe?: "; \
