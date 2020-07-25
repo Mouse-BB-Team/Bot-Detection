@@ -3,6 +3,7 @@ set-connection-with-PLGrid:
     read USERNAME; \
     ssh-copy-id $$USERNAME@pro.cyfronet.pl; \
 	echo "export PLG_USERNAME=$$USERNAME" >> ~/.bashrc; \
+	echo "export PLG_USERNAME=$$USERNAME" >> ~/.zshrc; \
 	echo "What is the name of branch that you want to observe?: "; \
 	read BRANCH; \
 	ssh $$USERNAME@pro.cyfronet.pl "echo 'export OBSERVED_BRANCH=$$BRANCH' >> ~/.bashrc && source ~/.bashrc && \
