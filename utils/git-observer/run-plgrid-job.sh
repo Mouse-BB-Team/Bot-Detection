@@ -5,3 +5,5 @@ lastCommitHash=$(git rev-parse --short HEAD)
 currentUser=$(whoami)
 
 curl -X POST -H 'Content-type: application/json' --data '{"text":"Pending job: '\#"$lastCommitHash"' ('"$currentUser"')"}' "$slackHookURL"
+
+# TODO: EXECUTE FUTURE JOB HERE
