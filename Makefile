@@ -1,10 +1,10 @@
 all: make-all-scripts-executable set-connection-with-PLGrid
 
 make-all-scripts-executable:
-	chmod +x run-commit-execution.sh
-	chmod +x run-plgrid-job.sh
-	chmod +x git-push-alias.sh
-	chmod +x json-parser.sh
+	chmod +x utils/git-observer/run-commit-execution.sh
+	chmod +x utils/git-observer/run-plgrid-job.sh
+	chmod +x utils/git-observer/git-push-alias.sh
+	chmod +x utils/git-observer/json-parser.sh
 
 set-connection-with-PLGrid:
 	@echo "What is your PLGrid username?: "; \
