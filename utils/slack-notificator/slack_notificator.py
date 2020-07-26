@@ -10,7 +10,7 @@ logging.config.fileConfig(logger_config_path)
 class SlackNotifier:
 
     def __init__(self, config='./config.json'):
-        self.logger = logging.getLogger(self.__class__.__name__)
+        self.__logger = logging.getLogger(self.__class__.__name__)
         self.configFile = config
         self.hookURL = None
         self.__load_config()
@@ -20,8 +20,16 @@ class SlackNotifier:
             self.hookURL = json.load(f)['hookURL']
 
     def notify(self, message):
-        response = requests.post(self.hookURL, json.dumps({"text": message}))
-        if response.status_code == 200:
-            self.logger.info("message sent: %s", message)
-        else:
-            self.logger.error("error when trying to send message: %s - %s", response.reason, response.status_code)
+        try:
+            response = requests.post(self.hookURL, json.dumps({"text": message}))
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            self.__logger.error("error when trying to send message", err)
+        except requests.exceptions.ConnectionError as err:
+            self.__logger.error("connection error occurred", err)
+        except requests.exceptions.Timeout as err:
+            self.__logger.error("timeout", err)
+        except requests.exceptions.RequestException as err:
+            self.__logger.error("request error", err)
+
+        self.__logger.info("message sent: %s", message)
