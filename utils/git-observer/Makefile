@@ -4,6 +4,7 @@ make-all-scripts-executable:
 	chmod +x run-commit-execution.sh
 	chmod +x run-plgrid-job.sh
 	chmod +x git-push-alias.sh
+	chmod +x json-parser.sh
 
 set-connection-with-PLGrid:
 	@echo "What is your PLGrid username?: "; \
