@@ -1,3 +1,5 @@
 {
-  "hookURL": "https://hooks.slack.com/services/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"
+  "hookURL": "https://hooks.slack.com/services/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",
+  "notifierName": "Prometheus Notifier",
+  "notifierIcon": "https://platform.slack-edge.com/img/default_application_icon.png"
 }
