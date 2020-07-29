@@ -69,10 +69,7 @@ class Message:
 
         @staticmethod
         def __create_fields(fields: Dict[AnyStr, AnyStr]):
-            result = list()
-            for key in fields.keys():
-                result.append({"title": key, "value": fields[key]})
-            return result
+            return [{"title": key, "value": value} for key, value in fields.items()]
 
         def build(self):
             message = {
