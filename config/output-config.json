@@ -1,5 +1,3 @@
 {
-  "outputPath": "/net/archive/groups/plggpchdyplo/outputs/output.csv",
-  "notifierName": "Prometheus Notifier",
-  "notifierIcon": "https://platform.slack-edge.com/img/default_application_icon.png"
+  "outputPath": "/net/archive/groups/plggpchdyplo/outputs/output.csv"
 }
