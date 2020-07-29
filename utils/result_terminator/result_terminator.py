@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import logging.config
 from filelock import FileLock
-from typing import Dict, List
+from typing import Dict, List, AnyStr
 import csv
 import os
 from utils.slack_notifier import *
@@ -31,14 +31,14 @@ class ResultTerminator:
                 writer = csv.DictWriter(file, fieldnames=self.schema)
                 writer.writeheader()
 
-    def __append_file(self, element: Dict[str, str]):
+    def __append_file(self, element: Dict[AnyStr, AnyStr]):
         with FileLock(self.outputPath + '.lock'):
             with open(self.outputPath, 'a') as file:
                 writer = csv.DictWriter(file, fieldnames=self.schema)
                 writer.writerow(element)
 
-    def terminate(self, data, message):
+    def terminate(self, element: Dict[AnyStr, AnyStr], message):
         if not os.path.isfile(self.outputPath):
             self.__create_file()
-        self.__append_file(data)
+        self.__append_file(element)
         self.slack_notifier.notify(message)
