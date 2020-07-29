@@ -19,10 +19,12 @@ class SlackNotifier:
         with open(self.configFile, 'r') as f:
             self.hookURL = json.load(f)['hookURL']
 
-    def notify(self, message):
+    def notify(self, json_message):
         try:
-            response = requests.post(self.hookURL, json.dumps({"text": message}))
+            message = json.dumps(json_message)
+            response = requests.post(self.hookURL, message)
             response.raise_for_status()
+            self.__logger.info("message sent")
         except requests.exceptions.HTTPError as err:
             self.__logger.error("error when trying to send message", err)
         except requests.exceptions.ConnectionError as err:
@@ -31,5 +33,3 @@ class SlackNotifier:
             self.__logger.error("timeout", err)
         except requests.exceptions.RequestException as err:
             self.__logger.error("request error", err)
-
-        self.__logger.info("message sent: %s", message)
