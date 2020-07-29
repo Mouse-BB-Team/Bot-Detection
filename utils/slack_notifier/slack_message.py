@@ -1,5 +1,3 @@
-import calendar
-import time
 from typing import AnyStr, Dict
 from enum import Enum
 
@@ -25,6 +23,9 @@ class Message:
             self.__text = ''
             self.__fields = {}
             self.__color = Message.Color.BLUE
+            self.__notifier_name = ''
+            self.__notifier_icon = ''
+            self.__timestamp = ''
 
         def with_summary(self, summary: AnyStr):
             self.__summary = summary
@@ -54,6 +55,18 @@ class Message:
             self.__color = color
             return self
 
+        def with_notifier_name(self, notifier_name: AnyStr):
+            self.__notifier_name = notifier_name
+            return self
+
+        def with_notifier_icon(self, notifier_icon: AnyStr):
+            self.__notifier_icon = notifier_icon
+            return self
+
+        def with_timestamp(self, timestamp: AnyStr):
+            self.__timestamp = timestamp
+            return self
+
         @staticmethod
         def __create_fields(fields: Dict[AnyStr, AnyStr]):
             result = list()
@@ -72,9 +85,9 @@ class Message:
                         "title": self.__subheader,
                         "text": self.__text,
                         "fields": self.__create_fields(self.__fields),
-                        "footer": "Prometheus Notifier",
-                        "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png",
-                        "ts": calendar.timegm(time.gmtime())
+                        "footer": self.__notifier_name,
+                        "footer_icon": self.__notifier_icon,
+                        "ts": self.__timestamp
                     }
                 ]
             }
