@@ -10,6 +10,8 @@ from utils.slack_notifier import *
 logger_config_path = Path(__file__).parent.joinpath('logger.config').absolute()
 logging.config.fileConfig(logger_config_path)
 
+LOCK_FILE_EXTENSION = '.lock'
+
 
 class ResultTerminator:
 
@@ -26,13 +28,13 @@ class ResultTerminator:
             self.outputPath = json.load(f)['outputPath']
 
     def __create_file(self):
-        with FileLock(self.outputPath + '.lock'):
+        with FileLock(self.outputPath + LOCK_FILE_EXTENSION):
             with open(self.outputPath, 'w') as file:
                 writer = csv.DictWriter(file, fieldnames=self.schema)
                 writer.writeheader()
 
     def __append_file(self, element: Dict[AnyStr, AnyStr]):
-        with FileLock(self.outputPath + '.lock'):
+        with FileLock(self.outputPath + LOCK_FILE_EXTENSION):
             with open(self.outputPath, 'a') as file:
                 writer = csv.DictWriter(file, fieldnames=self.schema)
                 writer.writerow(element)
