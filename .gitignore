@@ -1,7 +1,6 @@
 **/__pycache__/
-.idea/
-/utils/serializer/.idea/
+**/.idea/
+**/.pytest_cache/
+**/venv/
 /utils/serializer/serializer
 /utils/serializer/output/
-**/.pytest_cache/
-/utils/slack-notificator/venv/
