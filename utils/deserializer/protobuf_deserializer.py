@@ -4,7 +4,7 @@ from glob import glob
 from pathlib import Path
 import logging.config
 
-logger_config_path = Path(__file__).parent.joinpath('logger.config').absolute()
+logger_config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('logger.config').absolute()
 logging.config.fileConfig(logger_config_path)
 
 
