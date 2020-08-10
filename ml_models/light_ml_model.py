@@ -96,4 +96,5 @@ class LightMlModel:
         prediction_result = ["correct" if predicted_id[n] == label_id[n] else "wrong" for n in range(30)]
 
         print(prediction_result)
-        print(history.history["acc"])
+
+        return history.history["acc"]
