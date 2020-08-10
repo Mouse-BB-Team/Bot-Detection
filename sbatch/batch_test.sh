@@ -26,8 +26,8 @@ username=$(whoami)
 #SBATCH --error="test_error_$username_#$lastCommitHash.txt"
 
 
-module add plgrid/tools/python/3.8
-module add plgrid/libs/tensorflow-gpu/2.2.0-python-3.8
+module add plgrid/tools/python
+module add plgrid/libs/tensorflow
 
 cd $SLURM_SUBMIT_DIR
 cd ..
