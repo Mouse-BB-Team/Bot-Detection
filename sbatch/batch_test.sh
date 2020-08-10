@@ -30,5 +30,8 @@ module add plgrid/tools/python/3.8
 module add plgrid/libs/tensorflow-gpu/2.2.0-python-3.8
 
 cd $SLURM_SUBMIT_DIR
+cd ..
 
-python3 ../main.py
+pip install -r requirements.txt
+
+python3 main.py
