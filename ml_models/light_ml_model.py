@@ -16,86 +16,84 @@ class CollectBatchStats(tf.keras.callbacks.Callback):
         self.model.reset_metrics()
 
 
-# classifier_url = "https://tfhub.dev/tensorflow/efficientnet/lite2/classification/2"
-classifier_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2"
+class LightMlModel:
+    classifier_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2"
+    feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"
+    IMAGE_SHAPE = (224, 224)
 
-IMAGE_SHAPE = (224, 224)
+    def run(self):
+        grace_hopper = tf.keras.utils.get_file('image.jpg',
+                                               'https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg')
+        classifier = tf.keras.Sequential([
+            hub.KerasLayer(LightMlModel.classifier_url, input_shape=LightMlModel.IMAGE_SHAPE + (3,))
+        ])
+        grace_hopper = Image.open(grace_hopper).resize(LightMlModel.IMAGE_SHAPE)
 
-classifier = tf.keras.Sequential([
-    hub.KerasLayer(classifier_url, input_shape=IMAGE_SHAPE + (3,))
-])
+        grace_hopper = np.array(grace_hopper) / 255.0
 
-grace_hopper = tf.keras.utils.get_file('image.jpg',
-                                       'https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg')
-grace_hopper = Image.open(grace_hopper).resize(IMAGE_SHAPE)
+        result = classifier.predict(grace_hopper[np.newaxis, ...])
 
-grace_hopper = np.array(grace_hopper) / 255.0
+        predicted_class = np.argmax(result[0], axis=-1)
 
-result = classifier.predict(grace_hopper[np.newaxis, ...])
+        labels_path = tf.keras.utils.get_file('ImageNetLabels.txt',
+                                              'https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
+        imagenet_labels = np.array(open(labels_path).read().splitlines())
 
-predicted_class = np.argmax(result[0], axis=-1)
+        predicted_class_name = imagenet_labels[predicted_class]
 
-labels_path = tf.keras.utils.get_file('ImageNetLabels.txt',
-                                      'https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
-imagenet_labels = np.array(open(labels_path).read().splitlines())
+        print(predicted_class_name)
 
-predicted_class_name = imagenet_labels[predicted_class]
+        data_root = tf.keras.utils.get_file(
+            'flower_photos', 'https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
+            untar=True)
 
-print(predicted_class_name)
+        image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1 / 255)
+        image_data = image_generator.flow_from_directory(str(data_root), target_size=LightMlModel.IMAGE_SHAPE)
 
-data_root = tf.keras.utils.get_file(
-    'flower_photos', 'https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
-    untar=True)
+        for image_batch, label_batch in image_data:
+            break
 
-image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1 / 255)
-image_data = image_generator.flow_from_directory(str(data_root), target_size=IMAGE_SHAPE)
+        result_batch = classifier.predict(image_batch)
 
-for image_batch, label_batch in image_data:
-    break
+        predicted_class_names = imagenet_labels[np.argmax(result_batch, axis=-1)]
 
-result_batch = classifier.predict(image_batch)
+        feature_extractor_layer = hub.KerasLayer(LightMlModel.feature_extractor_url,
+                                                 input_shape=(224, 224, 3))
 
-predicted_class_names = imagenet_labels[np.argmax(result_batch, axis=-1)]
+        feature_batch = feature_extractor_layer(image_batch)
+        feature_extractor_layer.trainable = False
 
-feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"
-# feature_extractor_url = "https://tfhub.dev/tensorflow/efficientnet/lite2/feature-vector/2"
+        model = tf.keras.Sequential([
+            feature_extractor_layer,
+            layers.Dense(image_data.num_classes)
+        ])
 
-feature_extractor_layer = hub.KerasLayer(feature_extractor_url,
-                                         input_shape=(224, 224, 3))
+        predictions = model(image_batch)
 
-feature_batch = feature_extractor_layer(image_batch)
-feature_extractor_layer.trainable = False
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(),
+            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+            metrics=['acc'])
 
-model = tf.keras.Sequential([
-    feature_extractor_layer,
-    layers.Dense(image_data.num_classes)
-])
+        steps_per_epoch = np.ceil(image_data.samples / image_data.batch_size)
 
-predictions = model(image_batch)
+        batch_stats_callback = CollectBatchStats()
 
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(),
-    loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-    metrics=['acc'])
+        history = model.fit(image_data, epochs=2,
+                            steps_per_epoch=steps_per_epoch,
+                            callbacks=[batch_stats_callback])
 
-steps_per_epoch = np.ceil(image_data.samples / image_data.batch_size)
+        class_names = sorted(image_data.class_indices.items(), key=lambda pair: pair[1])
+        class_names = np.array([key.title() for key, value in class_names])
+        print(class_names)
 
-batch_stats_callback = CollectBatchStats()
+        predicted_batch = model.predict(image_batch)
+        predicted_id = np.argmax(predicted_batch, axis=-1)
+        predicted_label_batch = class_names[predicted_id]
 
-history = model.fit(image_data, epochs=2,
-                    steps_per_epoch=steps_per_epoch,
-                    callbacks=[batch_stats_callback])
+        label_id = np.argmax(label_batch, axis=-1)
 
-class_names = sorted(image_data.class_indices.items(), key=lambda pair: pair[1])
-class_names = np.array([key.title() for key, value in class_names])
-print(class_names)
+        prediction_result = ["correct" if predicted_id[n] == label_id[n] else "wrong" for n in range(30)]
 
-predicted_batch = model.predict(image_batch)
-predicted_id = np.argmax(predicted_batch, axis=-1)
-predicted_label_batch = class_names[predicted_id]
-
-label_id = np.argmax(label_batch, axis=-1)
-
-prediction_result = ["correct" if predicted_id[n] == label_id[n] else "wrong" for n in range(30)]
-
-print(prediction_result)
+        print(prediction_result)
+        print(history.history["acc"])
