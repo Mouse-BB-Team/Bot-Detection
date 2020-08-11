@@ -9,11 +9,11 @@
 #SBATCH --cpus-per-task=24
 
 ## Job time
-#SBATCH --time=01:00:00
+#SBATCH --time=00:10:00
 
 ## Partition
 #SBATCH -p plgrid-gpu
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu
 
 
 module add plgrid/tools/python/3.8
