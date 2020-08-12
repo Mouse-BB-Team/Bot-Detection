@@ -39,8 +39,7 @@ class ResultTerminator:
                 writer = csv.DictWriter(file, fieldnames=self.schema)
                 writer.writerow(element)
 
-    def terminate(self, element: Dict[AnyStr, AnyStr], message):
+    def terminate(self, element: Dict[AnyStr, AnyStr]):
         if not os.path.isfile(self.outputPath):
             self.__create_file()
         self.__append_file(element)
-        self.slack_notifier.notify(message)
