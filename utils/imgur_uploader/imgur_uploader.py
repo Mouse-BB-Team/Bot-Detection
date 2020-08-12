@@ -8,7 +8,6 @@ class ImgurUploader:
 
     def __init__(self, config_file_path=__config_path):
         self.__config_file = config_file_path
-        self.recent_updated_urls = []
         self.__client_credentials: tuple = self.__load_config()
         self.__client = ImgurClient(*self.__client_credentials)
 
@@ -24,5 +23,4 @@ class ImgurUploader:
         image_id = uploaded_image["id"]
         image_url = f"https://imgur.com/{image_id}"
 
-        self.recent_updated_urls.append(image_url)
         return image_url
