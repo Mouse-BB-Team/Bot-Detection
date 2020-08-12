@@ -19,12 +19,6 @@ class StatisticsUtils:
         self.__available_metrics: List[AnyStr] = self.__results[0].history.keys()
         self.calculated_statistics = dict()
         self.plotter = PlottingUtils()
-        self.__calculate_statistics()
-
-    def __calculate_statistics(self):
-        for metric in self.__available_metrics:
-            self.calculate_mean_for_metric(metric)
-            self.calculate_std_for_metric(metric)
 
     def create_final_mean_accuracy_plot(self):
         acc_results_matrix = [record.history['accuracy'] for record in self.__results]
@@ -43,28 +37,6 @@ class StatisticsUtils:
         mean_val_loss_epoch_values = np.mean(val_loss_results_matrix, axis=0)
 
         self.plotter.create_plot("loss", mean_loss_epoch_values, mean_val_loss_epoch_values)
-
-    def calculate_mean_for_metric(self, metric_name):
-        attribute_name = self.__find_metric_name(metric_name)
-
-        mean_list = [np.mean(result.history[attribute_name]) for result in self.__results]
-        global_mean = np.mean(mean_list)
-
-        self.calculated_statistics[f"{attribute_name}_mean"] = global_mean
-
-        return global_mean
-
-    def calculate_std_for_metric(self, metric, std_mean=True):
-        attribute_name = self.__find_metric_name(metric)
-
-        val_list = [result.history[metric] for result in self.__results]
-        std_list = [np.std(val) if isinstance(val, list) else np.std(val_list) for val in val_list]
-
-        global_std = np.mean(std_list) if std_mean else std_list
-
-        self.calculated_statistics[f"{attribute_name}_std"] = global_std
-
-        return global_std
 
     def __find_metric_name(self, metric):
         attribute_name = None
