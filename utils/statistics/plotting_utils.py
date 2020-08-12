@@ -14,11 +14,13 @@ class PlottingUtils:
         self.__output_dir_path = Path(__file__).parent.joinpath("outputs")
         self.__commit_dir_path = Path(self.__output_dir_path).joinpath(self.__commit_hash)
 
-    def create_plot(self, metric_name, metric_arr, val_metric_arr=None, hold_on=False):
-        plt.plot(metric_arr)
+    def create_plot(self, metric_name, metric_arr, val_metric_arr=None):
         is_validation_data_provided = val_metric_arr is not None
+
+        plt.plot(metric_arr)
         if is_validation_data_provided:
             plt.plot(val_metric_arr)
+
         plt.title(f'model {metric_name}')
         plt.ylabel(metric_name)
         plt.xlabel('epoch')
@@ -31,13 +33,16 @@ class PlottingUtils:
         if is_validation_data_provided:
             self.__plotted_data[f'val_{metric_name}'] = val_metric_arr
 
-        if not hold_on:
-            plt.clf()
-            plt.cla()
+        plt.clf()
+        plt.cla()
 
         return uploaded_url
 
-    # TODO percentile
+    # TODO
+    def create_histogram(self, values_arr):
+        plt.hist(values_arr, density=True, bins=100)
+        plt.show()
+
     def __save_image(self, metric_name):
         if not os.path.exists(self.__output_dir_path):
             os.mkdir(self.__output_dir_path)
