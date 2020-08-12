@@ -5,7 +5,6 @@ from filelock import FileLock
 from typing import Dict, List, AnyStr
 import csv
 import os
-from utils.slack_notifier import *
 
 logger_config_path = Path(__file__).parent.joinpath('logger.config').absolute()
 logging.config.fileConfig(logger_config_path)
@@ -20,7 +19,6 @@ class ResultTerminator:
         self.configFile = config
         self.outputPath = None
         self.schema = field_list
-        self.slack_notifier = SlackNotifier()
         self.__load_config()
 
     def __load_config(self):
