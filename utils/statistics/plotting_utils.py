@@ -4,6 +4,7 @@ import os
 import csv
 from pathlib import Path
 from utils.imgur_uploader.imgur_uploader import ImgurUploader
+import numpy as np
 
 
 class PlottingUtils:
@@ -14,24 +15,20 @@ class PlottingUtils:
         self.__output_dir_path = Path(__file__).parent.joinpath("outputs")
         self.__commit_dir_path = Path(self.__output_dir_path).joinpath(self.__commit_hash)
 
-    def create_plot(self, metric_name, metric_arr, val_metric_arr=None):
-        is_validation_data_provided = val_metric_arr is not None
-
+    def create_plot(self, metric_name, metric_arr, val_metric_arr):
         plt.plot(metric_arr)
-        if is_validation_data_provided:
-            plt.plot(val_metric_arr)
+        plt.plot(val_metric_arr)
 
         plt.title(f'model {metric_name}')
         plt.ylabel(metric_name)
         plt.xlabel('epoch')
-        plt.legend(['train', 'test'] if is_validation_data_provided else ['train'], loc='upper left')
+        plt.legend(['train', 'test'], loc='upper left')
 
         image_path = self.__save_image(metric_name)
         uploaded_url = self.__uploader.upload_image(image_path)
-        self.__plotted_data[metric_name] = metric_arr
 
-        if is_validation_data_provided:
-            self.__plotted_data[f'val_{metric_name}'] = val_metric_arr
+        self.__plotted_data[metric_name] = metric_arr
+        self.__plotted_data[f'val_{metric_name}'] = val_metric_arr
 
         plt.clf()
         plt.cla()
@@ -40,7 +37,8 @@ class PlottingUtils:
 
     # TODO
     def create_histogram(self, values_arr):
-        plt.hist(values_arr, density=True, bins=100)
+        percentiles = [10, 20, 30, 50, 75, 90, 100]
+        percentiles_values = np.percentile(values_arr, percentiles)
         plt.show()
 
     def __save_image(self, metric_name):
