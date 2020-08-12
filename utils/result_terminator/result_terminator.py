@@ -16,28 +16,28 @@ class ResultTerminator:
 
     def __init__(self, field_list: List[str], config='../../config/output-config.json'):
         self.__logger = logging.getLogger(self.__class__.__name__)
-        self.configFile = config
-        self.outputPath = None
-        self.schema = field_list
+        self.__config_file = config
+        self.__output_path = None
+        self.__schema = field_list
         self.__load_config()
 
     def __load_config(self):
-        with open(self.configFile, 'r') as f:
-            self.outputPath = json.load(f)['outputPath']
+        with open(self.__config_file, 'r') as f:
+            self.__output_path = json.load(f)['outputPath']
 
     def __create_file(self):
-        with FileLock(self.outputPath + LOCK_FILE_EXTENSION):
-            with open(self.outputPath, 'w') as file:
-                writer = csv.DictWriter(file, fieldnames=self.schema)
+        with FileLock(self.__output_path + LOCK_FILE_EXTENSION):
+            with open(self.__output_path, 'w') as file:
+                writer = csv.DictWriter(file, fieldnames=self.__schema)
                 writer.writeheader()
 
     def __append_file(self, element: Dict[AnyStr, AnyStr]):
-        with FileLock(self.outputPath + LOCK_FILE_EXTENSION):
-            with open(self.outputPath, 'a') as file:
-                writer = csv.DictWriter(file, fieldnames=self.schema)
+        with FileLock(self.__output_path + LOCK_FILE_EXTENSION):
+            with open(self.__output_path, 'a') as file:
+                writer = csv.DictWriter(file, fieldnames=self.__schema)
                 writer.writerow(element)
 
     def terminate(self, element: Dict[AnyStr, AnyStr]):
-        if not os.path.isfile(self.outputPath):
+        if not os.path.isfile(self.__output_path):
             self.__create_file()
         self.__append_file(element)
