@@ -1,2 +1,2 @@
-from .slack_notificator import SlackNotifier
+from .slack_notifier import SlackNotifier
 from .slack_message import Message
