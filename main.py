@@ -1,4 +1,5 @@
 from ml_models.ml_model import MlModelExample
+from ml_models.light_ml_model import LightMlModel
 from utils.task_executor.task_executor import TaskExecutor
 from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.message.simple_slack_message import SimpleMessage
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     notifier.notify(slack_simple_msg)
 
     try:
-        model = MlModelExample()
+        model = LightMlModel()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
 
