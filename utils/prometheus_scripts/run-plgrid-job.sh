@@ -1,6 +1,8 @@
 #!/bin/bash
 
-slackHookURL=$(./json-parser.sh ../../config/slack-config.json hookURL)
+projectDir="$(dirname "$(dirname "$(pwd)")")"
+export PYTHONPATH=$PYTHONPATH:"$projectDir"
+
 lastCommitHash=$(git rev-parse --short HEAD)
 currentUser=$(whoami)
 currDate=$(date "+%d.%m.%y|%H:%M:%S")
@@ -18,4 +20,4 @@ sbatch \
 	--export=lastCommitHash="$lastCommitHash",output_path=$output_path,currDate="$currDate" \
 	sbatch_job_config.sh
 
-curl -X POST -H 'Content-type: application/json' --data '{"text":"Pending job: '\#"$lastCommitHash"' ('"$currentUser"')"}' "$slackHookURL"
+python3 ../notification_jobs/pending_job.py "$currentUser" "$lastCommitHash"
