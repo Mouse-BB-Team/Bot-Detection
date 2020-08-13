@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=24
 
 ## Job time
-#SBATCH --time=10:00:00
+#SBATCH --time=01:00:00
 
 ## Partition
 #SBATCH -p plgrid-testing

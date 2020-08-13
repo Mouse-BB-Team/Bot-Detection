@@ -18,7 +18,7 @@ if __name__ == '__main__':
         slack_simple_msg = slack_simple.new_builder() \
             .with_color(Color.BLUE) \
             .with_reporter("plgkamilkalis") \
-            .with_commit_hash(commit_hash) \
+            .with_commit_hash(f"#{commit_hash}") \
             .with_job_time(start_time) \
             .with_header("TEST JOB") \
             .with_info_message("Starting test job from prometheus") \
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         slack_result_msg = slack_results.new_builder() \
             .with_color(Color.GREEN) \
             .with_job_time(job_time) \
-            .with_commit_hash(commit_hash) \
+            .with_commit_hash(f"#{commit_hash}") \
             .with_reporter("plgkamilkalis") \
             .with_accuracy(stat_results['accuracy']) \
             .with_accuracy_chart(stat_results['accuracy_plot']) \
@@ -64,7 +64,7 @@ if __name__ == '__main__':
         slack_err_msg = slack_simple.new_builder() \
             .with_color(Color.RED) \
             .with_reporter("plgkamilkalis") \
-            .with_commit_hash(commit_hash) \
+            .with_commit_hash(f"#{commit_hash}") \
             .with_job_time(start_time) \
             .with_header("CRASHED JOB") \
             .with_info_message("Job crashed. Check logs!") \

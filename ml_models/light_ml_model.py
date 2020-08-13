@@ -97,4 +97,4 @@ class LightMlModel:
 
         print(prediction_result)
 
-        return history.history["acc"]
+        return history
