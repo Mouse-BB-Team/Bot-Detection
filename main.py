@@ -4,7 +4,7 @@ from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.simple_slack_message import SimpleMessage
 from utils.slack_notifier.result_slack_message import ResultMessage
 from utils.statistics.statistics_utils import StatisticsUtils
-from utils.slack_notifier.message_color import Color
+from utils.slack_notifier.color.message_color import Color
 from datetime import datetime
 import subprocess
 
@@ -14,17 +14,17 @@ if __name__ == '__main__':
         start_time = datetime.now()
 
         slack_simple = SimpleMessage()
-        # slack_simple_msg = slack_simple.new_builder() \
-        #     .with_color(Color.BLUE) \
-        #     .with_reporter("plgkamilkalis") \
-        #     .with_commit_hash(f"#{commit_hash}") \
-        #     .with_job_time(start_time) \
-        #     .with_header("TEST JOB") \
-        #     .with_info_message("Starting test job from prometheus") \
-        #     .build()
-        #
-        # notifier = SlackNotifier()
-        # notifier.notify(slack_simple_msg)
+        slack_simple_msg = slack_simple.new_builder() \
+            .with_color(Color.BLUE) \
+            .with_reporter("plgkamilkalis") \
+            .with_commit_hash(f"#{commit_hash}") \
+            .with_job_time(start_time) \
+            .with_header("TEST JOB") \
+            .with_info_message("Starting test job from prometheus") \
+            .build()
+
+        notifier = SlackNotifier()
+        notifier.notify(slack_simple_msg)
 
         model = MlModelExample()
         executor = TaskExecutor(model)

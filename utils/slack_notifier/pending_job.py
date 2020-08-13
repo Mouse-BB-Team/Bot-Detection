@@ -2,7 +2,6 @@ from slack_notifier import SlackNotifier
 from simple_slack_message import SimpleMessage
 from datetime import datetime
 from sys import argv
-from http.client import HTTPConnection
 
 if __name__ == '__main__':
     start_time = datetime.now()
