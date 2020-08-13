@@ -11,11 +11,10 @@ TN = 'true_negatives'
 TP = 'true_positives'
 FAR = 'false_acceptance_rate'
 FRR = 'false_rejection_rate'
+ROUND_DIGITS = 6
 
 
 class StatisticsUtils:
-    ROUND_DIGITS = 6
-
     def __init__(self, ml_model_results: List):
         self.__results: List[History] = ml_model_results
         self.plotter = PlottingUtils()
@@ -56,7 +55,7 @@ class StatisticsUtils:
 
     def create_model_accuracy_percentile_histogram(self):
         acc_results = [record.history[ACC][-1] for record in self.__results]
-        acc_results = np.round(acc_results, StatisticsUtils.ROUND_DIGITS) * 100
+        acc_results = np.round(acc_results, ROUND_DIGITS) * 100
         acc_results.sort()
         return self.plotter.create_histogram(acc_results)
 
@@ -68,7 +67,7 @@ class StatisticsUtils:
 
     def __calculate_mean_for_metric(self, metric):
         final_values = [record.history[metric][-1] for record in self.__results]
-        final_values_mean = np.mean(final_values).round(StatisticsUtils.ROUND_DIGITS)
+        final_values_mean = np.mean(final_values).round(ROUND_DIGITS)
         return final_values_mean
 
     def get_mean_false_negatives(self):
@@ -101,4 +100,4 @@ class StatisticsUtils:
                 confusion_matrix[metric] = record.history[metric]
             single_rate = confusion_matrix[metric_1] / (confusion_matrix[metric_1] + confusion_matrix[metric_2])
             single_rate_list.append(single_rate)
-        return np.mean(single_rate_list).round(StatisticsUtils.ROUND_DIGITS)
+        return np.mean(single_rate_list).round(ROUND_DIGITS)
