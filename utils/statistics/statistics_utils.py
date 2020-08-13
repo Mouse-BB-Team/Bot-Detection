@@ -11,7 +11,7 @@ TN = 'true_negatives'
 TP = 'true_positives'
 FAR = 'false_acceptance_rate'
 FRR = 'false_rejection_rate'
-ROUND_DIGITS = 6
+ROUND_DIGITS = 5
 
 
 class StatisticsUtils:
@@ -83,7 +83,7 @@ class StatisticsUtils:
         return self.__calculate_mean_from_confusion_matrix(TP).astype(int)
 
     def __calculate_mean_from_confusion_matrix(self, metric):
-        values = [record.history[metric] for record in self.__results]
+        values = [record.history[metric][-1] for record in self.__results]
         return np.mean(values)
 
     def get_mean_false_rejection_rate(self):
@@ -97,7 +97,7 @@ class StatisticsUtils:
         single_rate_list = []
         for record in self.__results:
             for metric in [FN, FP, TN, TP]:
-                confusion_matrix[metric] = record.history[metric]
+                confusion_matrix[metric] = record.history[metric][-1]
             single_rate = confusion_matrix[metric_1] / (confusion_matrix[metric_1] + confusion_matrix[metric_2])
             single_rate_list.append(single_rate)
         return np.mean(single_rate_list).round(ROUND_DIGITS)
