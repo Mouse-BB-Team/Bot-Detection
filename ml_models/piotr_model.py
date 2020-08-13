@@ -21,16 +21,18 @@ class PiotrModel:
         model.add(layers.Conv2D(64, (3, 3), activation='relu'))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(10))
+        model.add(layers.Dense(1, activation='sigmoid'))
         model.summary()
-        model.compile(optimizer='adam',
-                      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+
+        base_learning_rate = 0.0001
+        model.compile(optimizer=tf.optimizers.RMSprop(lr=base_learning_rate),
+                      loss=tf.losses.BinaryCrossentropy(from_logits=True),
                       metrics=[
                           tf.metrics.BinaryAccuracy(name='accuracy'),
-                          tf.metrics.FalsePositives(name='FP'),
-                          tf.metrics.TrueNegatives(name='TN'),
-                          tf.metrics.FalseNegatives(name='FN'),
-                          tf.metrics.TruePositives(name='TP')
+                          tf.metrics.FalsePositives(name='false_positives'),
+                          tf.metrics.TrueNegatives(name='true_negatives'),
+                          tf.metrics.FalseNegatives(name='false_negatives'),
+                          tf.metrics.TruePositives(name='true_positives')
                       ])
 
         history = model.fit(train_images, train_labels, epochs=10,
