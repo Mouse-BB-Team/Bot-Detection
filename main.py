@@ -19,7 +19,7 @@ if __name__ == '__main__':
         .with_reporter("plgkamilkalis") \
         .with_commit_hash(f"#{commit_hash}") \
         .with_job_time(start_time) \
-        .with_header("TEST JOB") \
+        .with_header("RUNNING JOB") \
         .with_info_message("Starting test job from prometheus") \
         .build()
     notifier = SlackNotifier()
@@ -34,10 +34,14 @@ if __name__ == '__main__':
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
+        print(result)
+
         job_time = end_time - start_time
 
         statistics = StatisticsUtils(result)
         # stat_results = statistics.calculate_all_statistics()
+        print("ACCURACY: " + statistics.get_mean_accuracy())
+        print("ACC URL:" + statistics.create_model_accuracy_training_plot())
 
         slack_results = ResultMessage()
         slack_result_msg = slack_results.new_builder() \
