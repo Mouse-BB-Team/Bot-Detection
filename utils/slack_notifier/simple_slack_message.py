@@ -1,5 +1,5 @@
 from typing import AnyStr, Dict
-from message_color import Color
+from .message_color import Color
 
 
 class SimpleMessage:
