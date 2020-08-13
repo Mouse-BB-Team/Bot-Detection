@@ -5,6 +5,7 @@ import csv
 from pathlib import Path
 from utils.imgur_uploader.imgur_uploader import ImgurUploader
 import numpy as np
+from itertools import zip_longest
 
 
 class PlottingUtils:
@@ -35,11 +36,32 @@ class PlottingUtils:
 
         return uploaded_url
 
-    # TODO
     def create_histogram(self, values_arr):
-        percentiles = [10, 20, 30, 50, 75, 90, 100]
+        percentiles = [x for x in range(5, 100, 5)]
+        percentiles.append(99)
+
         percentiles_values = np.percentile(values_arr, percentiles)
-        plt.show()
+
+        percentiles_values_round = percentiles_values.astype(int)
+
+        bars = plt.bar(percentiles, percentiles_values_round, width=2.4, align='edge', tick_label=percentiles)
+        for bar in bars:
+            yval = bar.get_height()
+            plt.text(bar.get_x(), yval + .005, yval)
+
+        plt.title(f'model accuracy percentiles histogram')
+        plt.ylabel("Accuracy [%]")
+        plt.xlabel('Percentile')
+
+        image_path = self.__save_image("percentile")
+        uploaded_url = self.__uploader.upload_image(image_path)
+        self.__plotted_data["perc_accuracy_val"] = percentiles_values
+        self.__plotted_data["percentiles"] = percentiles
+
+        plt.clf()
+        plt.cla()
+
+        return uploaded_url
 
     def __save_image(self, metric_name):
         if not os.path.exists(self.__output_dir_path):
@@ -60,6 +82,6 @@ class PlottingUtils:
             writer = csv.writer(f)
             writer.writerow(keys)
             data = (self.__plotted_data[key] for key in keys)
-            rows = zip(*data)
+            rows = zip_longest(*data)
             for row in rows:
                 writer.writerow(row)

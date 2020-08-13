@@ -31,8 +31,8 @@ class StatisticsUtils:
         calculated_statistics[FP] = self.get_mean_false_positives()
         calculated_statistics[TN] = self.get_mean_true_negatives()
         calculated_statistics[TP] = self.get_mean_true_positives()
-        calculated_statistics["accuracy_plot"] = self.create_model_accuracy_training_plot()
-        calculated_statistics["loss_plot"] = self.create_model_loss_training_plot()
+        calculated_statistics[f"{ACC}_plot"] = self.create_model_accuracy_training_plot()
+        calculated_statistics[f"{LOSS}_plot"] = self.create_model_loss_training_plot()
         calculated_statistics["percentiles_hist"] = self.create_model_accuracy_percentile_histogram()
 
         self.plotter.save_plotted_data_to_csv()
@@ -54,9 +54,9 @@ class StatisticsUtils:
 
         return self.plotter.create_plot(metric, mean_epoch_values, mean_val_epoch_values)
 
-    # TODO
     def create_model_accuracy_percentile_histogram(self):
-        acc_results = [round(record.history[ACC][-1], StatisticsUtils.ROUND_DIGITS) for record in self.__results]
+        acc_results = [record.history[ACC][-1] for record in self.__results]
+        acc_results = np.round(acc_results, StatisticsUtils.ROUND_DIGITS) * 100
         acc_results.sort()
         return self.plotter.create_histogram(acc_results)
 
