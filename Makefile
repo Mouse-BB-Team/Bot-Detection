@@ -23,5 +23,5 @@ set-connection-with-PLGrid:
 	echo Copy above ssh key to your github account. If you finish, press any key ... && \
 	read && \
 	git clone git@github.com:Mouse-BB-Team/Bot-Detection.git && \
-	chmod +x ~/Bot-Detection/utils/git-observer/run-plgrid-job.sh && \
+	chmod +x ~/Bot-Detection/utils/prometheus_scripts/run-plgrid-job.sh && \
 	echo 'export NOTIFY=true' >> ~/.bashrc";
