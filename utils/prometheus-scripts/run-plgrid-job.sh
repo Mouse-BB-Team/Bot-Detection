@@ -18,4 +18,4 @@ sbatch \
 	--export=lastCommitHash="$lastCommitHash",output_path=$output_path,currDate="$currDate" \
 	sbatch_job_config.sh
 
-curl -X POST -H 'Content-type: application/json' --data '{"text":"Pending job: '\#"$lastCommitHash"' ('"$currentUser"')"}' "$slackHookURL"
+python3 pending_job currentUser lastCommitHash

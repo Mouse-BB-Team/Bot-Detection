@@ -12,7 +12,6 @@ if __name__ == '__main__':
     try:
         commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
         start_time = datetime.now()
-        start_time_str = start_time.strftime('%Y-%m-%d %H:%M:%S')
 
         slack_simple = SimpleMessage()
         slack_simple_msg = slack_simple.new_builder() \
@@ -71,4 +70,3 @@ if __name__ == '__main__':
             .build()
         notifier.notify(slack_err_msg)
         print(e)
-
