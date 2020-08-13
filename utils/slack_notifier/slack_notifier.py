@@ -8,8 +8,9 @@ logging.config.fileConfig(logger_config_path)
 
 
 class SlackNotifier:
+    __config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('slack-config.json')
 
-    def __init__(self, config='../../config/slack-config.json'):
+    def __init__(self, config=__config_path):
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__config_file = config
         self.__hook_URL = None
