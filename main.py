@@ -9,29 +9,28 @@ from datetime import datetime
 import subprocess
 
 if __name__ == '__main__':
+    commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
+    start_time = datetime.now()
+
+    slack_simple = SimpleMessage()
+    slack_simple_msg = slack_simple.new_builder() \
+        .with_color(Color.BLUE) \
+        .with_reporter("plgkamilkalis") \
+        .with_commit_hash(f"#{commit_hash}") \
+        .with_job_time(start_time) \
+        .with_header("TEST JOB") \
+        .with_info_message("Starting test job from prometheus") \
+        .build()
+    notifier = SlackNotifier()
+    notifier.notify(slack_simple_msg)
+
     try:
-        commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
-        start_time = datetime.now()
-
-        slack_simple = SimpleMessage()
-        slack_simple_msg = slack_simple.new_builder() \
-            .with_color(Color.BLUE) \
-            .with_reporter("plgkamilkalis") \
-            .with_commit_hash(f"#{commit_hash}") \
-            .with_job_time(start_time) \
-            .with_header("TEST JOB") \
-            .with_info_message("Starting test job from prometheus") \
-            .build()
-
-        notifier = SlackNotifier()
-        notifier.notify(slack_simple_msg)
-
         model = MlModelExample()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
 
         end_time = datetime.now()
-        end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S')
+        end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
         job_time = end_time - start_time
 
@@ -59,12 +58,14 @@ if __name__ == '__main__':
             .build()
 
         notifier.notify(slack_result_msg)
+
     except Exception as e:
+        crashed_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         slack_err_msg = slack_simple.new_builder() \
             .with_color(Color.RED) \
             .with_reporter("plgkamilkalis") \
             .with_commit_hash(f"#{commit_hash}") \
-            .with_job_time(start_time) \
+            .with_job_time(crashed_time) \
             .with_header("CRASHED JOB") \
             .with_info_message("Job crashed. Check logs!") \
             .build()
