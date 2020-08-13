@@ -11,18 +11,18 @@ class SlackNotifier:
 
     def __init__(self, config='../../config/slack-config.json'):
         self.__logger = logging.getLogger(self.__class__.__name__)
-        self.configFile = config
-        self.hookURL = None
+        self.__config_file = config
+        self.__hook_URL = None
         self.__load_config()
 
     def __load_config(self):
-        with open(self.configFile, 'r') as f:
-            self.hookURL = json.load(f)['hookURL']
+        with open(self.__config_file, 'r') as f:
+            self.__hook_URL = json.load(f)['hookURL']
 
     def notify(self, json_message):
         try:
             message = json.dumps(json_message)
-            response = requests.post(self.hookURL, message)
+            response = requests.post(self.__hook_URL, message)
             response.raise_for_status()
             self.__logger.info("message sent")
         except requests.exceptions.HTTPError as err:
