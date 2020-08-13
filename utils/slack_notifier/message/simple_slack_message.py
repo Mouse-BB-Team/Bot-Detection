@@ -1,5 +1,5 @@
 from typing import AnyStr, Dict
-from utils.slack_notifier.color.message_color import Color
+from utils.slack_notifier.message.color import Color
 
 
 class SimpleMessage:

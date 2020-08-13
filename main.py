@@ -1,10 +1,10 @@
 from ml_models.ml_model import MlModelExample
 from utils.task_executor.task_executor import TaskExecutor
 from utils.slack_notifier.slack_notifier import SlackNotifier
-from utils.slack_notifier.simple_slack_message import SimpleMessage
-from utils.slack_notifier.result_slack_message import ResultMessage
+from utils.slack_notifier.message.simple_slack_message import SimpleMessage
+from utils.slack_notifier.message.result_slack_message import ResultMessage
 from utils.statistics.statistics_utils import StatisticsUtils
-from utils.slack_notifier.color.message_color import Color
+from utils.slack_notifier.message.color import Color
 from datetime import datetime
 import subprocess
 

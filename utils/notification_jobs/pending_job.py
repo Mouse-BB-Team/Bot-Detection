@@ -1,7 +1,7 @@
-from ..slack_notifier.slack_notifier import SlackNotifier
-from ..slack_notifier.simple_slack_message import SimpleMessage
+from utils.slack_notifier import *
 from datetime import datetime
 from sys import argv
+from os import system
 
 
 class PendingJobNotification:
@@ -20,3 +20,4 @@ class PendingJobNotification:
 
 if __name__ == '__main__':
     PendingJobNotification.notify()
+    system('echo $PYTHONPATH')
