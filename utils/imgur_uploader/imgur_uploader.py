@@ -21,6 +21,6 @@ class ImgurUploader:
     def upload_image(self, image_path):
         uploaded_image = self.__client.upload_from_path(image_path)
         image_id = uploaded_image["id"]
-        image_url = f"https://imgur.com/{image_id}"
+        image_url = f"https://i.imgur.com/{image_id}.png"
 
         return image_url
