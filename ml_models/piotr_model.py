@@ -35,9 +35,8 @@ class PiotrModel:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        history = model.fit(train_images, train_labels, epochs=10,
+        history = model.fit(train_images, train_labels, epochs=1,
                             validation_data=(test_images, test_labels))
-        test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
-        print(test_acc)
+        loss0, accuracy0, fp0, tn0, fn0, tp0 = model.evaluate(test_images, test_labels, verbose=2)
 
         return history

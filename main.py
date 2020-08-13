@@ -68,7 +68,6 @@ if __name__ == '__main__':
 
     except Exception as e:
         if NOTIFY is not None:
-            # with open()
             crashed_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
             slack_err_msg = slack_simple.new_builder() \
                 .with_color(Color.RED) \
@@ -76,7 +75,7 @@ if __name__ == '__main__':
                 .with_commit_hash(f"#{commit_hash}") \
                 .with_job_time(crashed_time) \
                 .with_header("CRASHED JOB") \
-                .with_info_message(f"Job crashed: {e}\n") \
+                .with_info_message(f"Job crashed: {e}") \
                 .build()
             notifier.notify(slack_err_msg)
         else:
