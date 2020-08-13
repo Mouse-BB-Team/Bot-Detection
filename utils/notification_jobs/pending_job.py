@@ -6,7 +6,7 @@ from sys import argv
 class PendingJobNotification:
     @staticmethod
     def notify():
-        start_time = datetime.now()
+        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         notifier = SlackNotifier()
         simple_msg = SimpleMessage.new_builder() \
             .with_reporter(argv[1]) \
