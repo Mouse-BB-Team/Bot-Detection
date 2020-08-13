@@ -31,9 +31,8 @@ if __name__ == '__main__':
 
     try:
         model = PiotrModel()
-        # executor = TaskExecutor(model)
-        # result = executor.start_execution(2)
-        result = [model.run()]
+        executor = TaskExecutor(model)
+        result = executor.start_execution(10)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -61,7 +60,7 @@ if __name__ == '__main__':
                 .with_loss(statistics.get_mean_loss()) \
                 .with_true_negatives(f"{statistics.get_mean_true_negatives()}") \
                 .with_true_positives(f"{statistics.get_mean_true_positives()}") \
-                .with_summary("Completed job") \
+                .with_summary(f"Completed job #{commit_hash}") \
                 .build()
 
             notifier.notify(slack_result_msg)
