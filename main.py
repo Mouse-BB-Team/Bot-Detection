@@ -71,3 +71,4 @@ if __name__ == '__main__':
             .build()
         notifier.notify(slack_err_msg)
         print(e)
+
