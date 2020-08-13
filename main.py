@@ -41,7 +41,7 @@ if __name__ == '__main__':
         job_time = end_time - start_time
 
         statistics = StatisticsUtils(result)
-        # stat_results = statistics.calculate_all_statistics()
+        stat_results = statistics.calculate_all_statistics()
 
         if NOTIFY is not None:
             slack_results = ResultMessage()
