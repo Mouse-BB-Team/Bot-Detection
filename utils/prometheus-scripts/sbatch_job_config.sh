@@ -24,4 +24,5 @@ cd ../..
 
 pip install -r requirements.txt
 
+python3 ../slack_notifier/pending_job.py $currentUser $lastCommitHash
 python3 main.py
