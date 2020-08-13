@@ -1,5 +1,5 @@
-from utils.slack_notifier.slack_notifier import SlackNotifier
-from utils.slack_notifier.simple_slack_message import SimpleMessage
+from slack_notifier import SlackNotifier
+from simple_slack_message import SimpleMessage
 from datetime import datetime
 from sys import argv
 

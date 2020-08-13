@@ -21,6 +21,9 @@ class LightMlModel:
     feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2"
     IMAGE_SHAPE = (224, 224)
 
+    def __init__(self):
+        pass
+
     def run(self):
         grace_hopper = tf.keras.utils.get_file('image.jpg',
                                                'https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg')

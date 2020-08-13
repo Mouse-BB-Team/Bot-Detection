@@ -139,7 +139,7 @@ class MlModelExample:
         loss += history_fine.history['loss']
         val_loss += history_fine.history['val_loss']
 
-        return (acc, val_acc), (loss, val_loss), (far, far_loss), (frr, frr_loss)
+        return history_fine
 
     def __load_example_data(self):
         (raw_train, raw_validation, raw_test), _ = tfds.load(

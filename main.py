@@ -1,4 +1,4 @@
-from ml_models.light_ml_model import LightMlModel
+from ml_models.ml_model import MlModelExample
 from utils.task_executor.task_executor import TaskExecutor
 from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.simple_slack_message import SimpleMessage
@@ -14,19 +14,19 @@ if __name__ == '__main__':
         start_time = datetime.now()
 
         slack_simple = SimpleMessage()
-        slack_simple_msg = slack_simple.new_builder() \
-            .with_color(Color.BLUE) \
-            .with_reporter("plgkamilkalis") \
-            .with_commit_hash(f"#{commit_hash}") \
-            .with_job_time(start_time) \
-            .with_header("TEST JOB") \
-            .with_info_message("Starting test job from prometheus") \
-            .build()
+        # slack_simple_msg = slack_simple.new_builder() \
+        #     .with_color(Color.BLUE) \
+        #     .with_reporter("plgkamilkalis") \
+        #     .with_commit_hash(f"#{commit_hash}") \
+        #     .with_job_time(start_time) \
+        #     .with_header("TEST JOB") \
+        #     .with_info_message("Starting test job from prometheus") \
+        #     .build()
+        #
+        # notifier = SlackNotifier()
+        # notifier.notify(slack_simple_msg)
 
-        notifier = SlackNotifier()
-        notifier.notify(slack_simple_msg)
-
-        model = LightMlModel()
+        model = MlModelExample()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
 

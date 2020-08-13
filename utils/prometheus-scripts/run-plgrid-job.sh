@@ -18,4 +18,4 @@ sbatch \
 	--export=lastCommitHash="$lastCommitHash",output_path=$output_path,currDate="$currDate" \
 	sbatch_job_config.sh
 
-python3 ../slack_notifier/pending_job.py currentUser lastCommitHash
+python3 ../slack_notifier/pending_job.py $currentUser $lastCommitHash
