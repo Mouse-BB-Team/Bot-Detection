@@ -52,15 +52,15 @@ if __name__ == '__main__':
                 .with_reporter("plgkamilkalis") \
                 .with_accuracy(f"{statistics.get_mean_accuracy()}%") \
                 .with_accuracy_chart(f"{statistics.create_model_accuracy_training_plot()}") \
-                .with_loss_chart("https://img.pakamera.net/i1/7/379/obrazy-i-plakaty-12320957_6788571379.jpg") \
-                .with_percentile_chart("https://img.pakamera.net/i1/7/379/obrazy-i-plakaty-12320957_6788571379.jpg") \
-                .with_false_acceptance_rate("stat_results['false_acceptance_rate']") \
-                .with_false_negatives("statistics.get_mean_false_negatives()") \
-                .with_false_positives("statistics.get_mean_false_positives()") \
-                .with_false_rejection_rate("statistics.get_mean_false_rejection_rate()") \
-                .with_loss("stat_results['loss']") \
-                .with_true_negatives("statistics.get_mean_true_negatives()") \
-                .with_true_positives("statistics.get_mean_true_positives()") \
+                .with_loss_chart(f"{statistics.create_model_loss_training_plot()}") \
+                .with_percentile_chart(f"{statistics.create_model_accuracy_percentile_histogram()}") \
+                .with_false_acceptance_rate(f"{statistics.get_mean_false_acceptance_rate()}") \
+                .with_false_negatives(f"{statistics.get_mean_false_negatives()}") \
+                .with_false_positives(f"{statistics.get_mean_false_positives()}") \
+                .with_false_rejection_rate(f"{statistics.get_mean_false_rejection_rate()}") \
+                .with_loss(statistics.get_mean_loss()) \
+                .with_true_negatives(f"{statistics.get_mean_true_negatives()}") \
+                .with_true_positives(f"{statistics.get_mean_true_positives()}") \
                 .with_summary("Completed job") \
                 .build()
 

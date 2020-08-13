@@ -25,9 +25,15 @@ class PiotrModel:
         model.summary()
         model.compile(optimizer='adam',
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                      metrics=['accuracy'])
+                      metrics=[
+                          tf.metrics.BinaryAccuracy(name='accuracy'),
+                          tf.metrics.FalsePositives(name='FP'),
+                          tf.metrics.TrueNegatives(name='TN'),
+                          tf.metrics.FalseNegatives(name='FN'),
+                          tf.metrics.TruePositives(name='TP')
+                      ])
 
-        history = model.fit(train_images, train_labels, epochs=1,
+        history = model.fit(train_images, train_labels, epochs=10,
                             validation_data=(test_images, test_labels))
         test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
         print(test_acc)
