@@ -1,4 +1,4 @@
-from ml_models.ml_model import MlModelExample
+from ml_models.piotr_model import PiotrModel
 from ml_models.light_ml_model import LightMlModel
 from utils.task_executor.task_executor import TaskExecutor
 from utils.slack_notifier.slack_notifier import SlackNotifier
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     notifier.notify(slack_simple_msg)
 
     try:
-        model = LightMlModel()
+        model = PiotrModel()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         job_time = end_time - start_time
 
         statistics = StatisticsUtils(result)
-        stat_results = statistics.calculate_all_statistics()
+        # stat_results = statistics.calculate_all_statistics()
 
         slack_results = ResultMessage()
         slack_result_msg = slack_results.new_builder() \
@@ -44,19 +44,19 @@ if __name__ == '__main__':
             .with_job_time(job_time) \
             .with_commit_hash(f"#{commit_hash}") \
             .with_reporter("plgkamilkalis") \
-            .with_accuracy(stat_results['accuracy']) \
-            .with_accuracy_chart(stat_results['accuracy_plot']) \
-            .with_false_acceptance_rate(stat_results['false_acceptance_rate']) \
-            .with_false_negatives(statistics.get_mean_false_negatives()) \
-            .with_false_positives(statistics.get_mean_false_positives()) \
-            .with_false_rejection_rate(statistics.get_mean_false_rejection_rate()) \
-            .with_loss(stat_results['loss']) \
-            .with_loss_chart(stat_results["loss_plot"]) \
-            .with_percentile_chart(stat_results['percentiles_hist']) \
-            .with_true_negatives(statistics.get_mean_true_negatives()) \
-            .with_true_positives(statistics.get_mean_true_positives()) \
+            .with_accuracy(statistics.get_mean_accuracy()) \
+            .with_accuracy_chart(statistics.create_model_accuracy_training_plot()) \
             .with_summary("Completed job") \
             .build()
+        # .with_false_acceptance_rate(stat_results['false_acceptance_rate']) \
+        # .with_false_negatives(statistics.get_mean_false_negatives()) \
+        # .with_false_positives(statistics.get_mean_false_positives()) \
+        # .with_false_rejection_rate(statistics.get_mean_false_rejection_rate()) \
+        # .with_loss(stat_results['loss']) \
+        # .with_loss_chart(stat_results["loss_plot"]) \
+        # .with_percentile_chart(stat_results['percentiles_hist']) \
+        # .with_true_negatives(statistics.get_mean_true_negatives()) \
+        # .with_true_positives(statistics.get_mean_true_positives()) \
 
         notifier.notify(slack_result_msg)
 
