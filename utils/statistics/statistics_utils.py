@@ -11,7 +11,7 @@ TN = 'true_negatives'
 TP = 'true_positives'
 FAR = 'false_acceptance_rate'
 FRR = 'false_rejection_rate'
-ROUND_DIGITS = 6
+ROUND_DIGITS = 4
 
 
 class StatisticsUtils:

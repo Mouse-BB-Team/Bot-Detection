@@ -27,6 +27,13 @@ class SlackNotifier:
     def notify(self, json_message):
         message = json.dumps(json_message)
         headers = {"Content-type": "application/json"}
-        connection = HTTPSConnection(self.__hook_URL)
-        connection.request("POST", self.__hook_context, message, headers)
-        connection.close()
+        try:
+            connection = HTTPSConnection(self.__hook_URL)
+            connection.request("POST", self.__hook_context, message, headers)
+            response = connection.getresponse()
+            if response.status != 200:
+                raise AttributeError(f"Response body: {response.read()}")
+        except Exception as e:
+            raise e
+        finally:
+            connection.close()

@@ -103,7 +103,7 @@ class ResultMessage:
                                 "type": "header",
                                 "text": {
                                     "type": "plain_text",
-                                    "text": "Finished job!",
+                                    "text": "FINISHED JOB",
                                     "emoji": True
                                 }
                             },
