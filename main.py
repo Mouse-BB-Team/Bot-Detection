@@ -27,8 +27,9 @@ if __name__ == '__main__':
 
     try:
         model = PiotrModel()
-        executor = TaskExecutor(model)
-        result = executor.start_execution(2)
+        # executor = TaskExecutor(model)
+        # result = executor.start_execution(2)
+        result = [model.run()]
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -48,6 +49,7 @@ if __name__ == '__main__':
             .with_accuracy_chart(statistics.create_model_accuracy_training_plot()) \
             .with_summary("Completed job") \
             .build()
+
         # .with_false_acceptance_rate(stat_results['false_acceptance_rate']) \
         # .with_false_negatives(statistics.get_mean_false_negatives()) \
         # .with_false_positives(statistics.get_mean_false_positives()) \
