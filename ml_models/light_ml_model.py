@@ -76,7 +76,13 @@ class LightMlModel:
         model.compile(
             optimizer=tf.keras.optimizers.Adam(),
             loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-            metrics=['acc'])
+            metrics=[
+                tf.metrics.BinaryAccuracy(name='accuracy'),
+                tf.metrics.FalsePositives(name='false_positives'),
+                tf.metrics.TrueNegatives(name='true_negatives'),
+                tf.metrics.FalseNegatives(name='false_negatives'),
+                tf.metrics.TruePositives(name='true_positives')
+            ])
 
         steps_per_epoch = np.ceil(image_data.samples / image_data.batch_size)
 

@@ -26,7 +26,7 @@ class PiotrModel:
 
         base_learning_rate = 0.0001
         model.compile(optimizer=tf.optimizers.RMSprop(lr=base_learning_rate),
-                      loss=tf.losses.BinaryCrossentropy(from_logits=True),
+                      loss=tf.losses.CategoricalCrossentropy(from_logits=True),
                       metrics=[
                           tf.metrics.BinaryAccuracy(name='accuracy'),
                           tf.metrics.FalsePositives(name='false_positives'),
@@ -35,8 +35,10 @@ class PiotrModel:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        history = model.fit(train_images, train_labels, epochs=10,
+        history = model.fit(train_images, train_labels, epochs=20,
                             validation_data=(test_images, test_labels))
         loss0, accuracy0, fp0, tn0, fn0, tp0 = model.evaluate(test_images, test_labels, verbose=2)
+
+        print(loss0, accuracy0, fp0, tn0, fn0, tp0)
 
         return history

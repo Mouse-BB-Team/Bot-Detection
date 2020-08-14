@@ -1,7 +1,11 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
-tfds.disable_progress_bar()
+
+# tfds.disable_progress_bar()
 
 
 class MlModelExample:
@@ -31,12 +35,10 @@ class MlModelExample:
         for image_batch, label_batch in train_batches.take(1):
             pass
 
-        # print(image_batch.shape)
 
         # Create the base model from the pre-trained model MobileNet V2
         base_model = self.pretrained_model
         feature_batch = base_model(image_batch)
-        # print(feature_batch.shape)
 
         # Here we will extract features from pretrained model,
         # then put them into our classifier
@@ -45,11 +47,9 @@ class MlModelExample:
 
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         feature_batch_average = global_average_layer(feature_batch)
-        # print(feature_batch_average.shape)
 
         prediction_layer = tf.keras.layers.Dense(1, activation='sigmoid')
         prediction_batch = prediction_layer(feature_batch_average)
-        # print(prediction_batch.shape)
 
         model = tf.keras.Sequential([
             base_model,
@@ -60,13 +60,12 @@ class MlModelExample:
         base_learning_rate = 0.0001
         model.compile(optimizer=tf.optimizers.RMSprop(lr=base_learning_rate),
                       loss=tf.losses.BinaryCrossentropy(from_logits=True),
-                      # metrics available: https://keras.io/api/metrics
                       metrics=[
                           tf.metrics.BinaryAccuracy(name='accuracy'),
-                          tf.metrics.FalsePositives(name='FP'),
-                          tf.metrics.TrueNegatives(name='TN'),
-                          tf.metrics.FalseNegatives(name='FN'),
-                          tf.metrics.TruePositives(name='TP')
+                          tf.metrics.FalsePositives(name='false_positives'),
+                          tf.metrics.TrueNegatives(name='true_negatives'),
+                          tf.metrics.FalseNegatives(name='false_negatives'),
+                          tf.metrics.TruePositives(name='true_positives')
                       ])
 
         initial_epochs = 1
@@ -85,18 +84,6 @@ class MlModelExample:
                             epochs=initial_epochs,
                             validation_data=validation_batches)
 
-        acc = history.history['accuracy']
-        val_acc = history.history['val_accuracy']
-
-        loss = history.history['loss']
-        val_loss = history.history['val_loss']
-
-        far = [fp / (fp + tn) for fp, tn in zip(history.history['FP'], history.history['TN'])]
-        far_loss = [fp / (fp + tn) for fp, tn in zip(history.history['val_FP'], history.history['val_TN'])]
-
-        frr = [fn / (fn + tp) for fn, tp in zip(history.history['FN'], history.history['TP'])]
-        frr_loss = [fn / (fn + tp) for fn, tp in zip(history.history['val_FN'], history.history['val_TP'])]
-
         base_model.trainable = True
         # Let's take a look to see how many layers are in the base model
         print("Number of layers in the base model: ", len(base_model.layers))
@@ -112,11 +99,11 @@ class MlModelExample:
         model.compile(loss=tf.losses.BinaryCrossentropy(from_logits=True),
                       optimizer=tf.optimizers.RMSprop(lr=base_learning_rate / 10),
                       metrics=[
-                          tf.metrics.BinaryAccuracy(threshold=0.0, name='accuracy'),
-                          tf.metrics.FalsePositives(name='FP'),
-                          tf.metrics.TrueNegatives(name='TN'),
-                          tf.metrics.FalseNegatives(name='FN'),
-                          tf.metrics.TruePositives(name='TP')
+                          tf.metrics.BinaryAccuracy(name='accuracy'),
+                          tf.metrics.FalsePositives(name='false_positives'),
+                          tf.metrics.TrueNegatives(name='true_negatives'),
+                          tf.metrics.FalseNegatives(name='false_negatives'),
+                          tf.metrics.TruePositives(name='true_positives')
                       ])
 
         fine_tune_epochs = 1
@@ -127,21 +114,10 @@ class MlModelExample:
                                  initial_epoch=history.epoch[-1],
                                  validation_data=validation_batches)
 
-        acc += history_fine.history['accuracy']
-        val_acc += history_fine.history['val_accuracy']
-
-        far += [fp / (fp + tn) for fp, tn in zip(history_fine.history['FP'], history_fine.history['TN'])]
-        far_loss += [fp / (fp + tn) for fp, tn in zip(history_fine.history['val_FP'], history_fine.history['val_TN'])]
-
-        frr += [fn / (fn + tp) for fn, tp in zip(history_fine.history['FN'], history_fine.history['TP'])]
-        frr_loss += [fn / (fn + tp) for fn, tp in zip(history_fine.history['val_FN'], history_fine.history['val_TP'])]
-
-        loss += history_fine.history['loss']
-        val_loss += history_fine.history['val_loss']
-
         return history_fine
 
-    def __load_example_data(self):
+    @staticmethod
+    def __load_example_data():
         (raw_train, raw_validation, raw_test), _ = tfds.load(
             'cats_vs_dogs',
             split=['train[:80%]', 'train[80%:90%]', 'train[90%:]'],

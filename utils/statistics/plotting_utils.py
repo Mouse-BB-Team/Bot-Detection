@@ -13,6 +13,7 @@ class PlottingUtils:
         self.__plotted_data = dict()
         self.__uploader = ImgurUploader()
         self.__commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
+        # TODO: on prometheus save outputs on shared team space
         self.__output_dir_path = Path(__file__).parent.joinpath("outputs")
         self.__commit_dir_path = Path(self.__output_dir_path).joinpath(self.__commit_hash)
 
