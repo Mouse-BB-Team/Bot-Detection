@@ -33,7 +33,8 @@ if __name__ == '__main__':
     try:
         model = MlModelExample()
         executor = TaskExecutor(model)
-        result = executor.start_execution(1)
+        # result = executor.start_execution(1)
+        result = [model.run()]
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
