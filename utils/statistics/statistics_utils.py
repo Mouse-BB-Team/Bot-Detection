@@ -44,7 +44,7 @@ class StatisticsUtils:
         mean_epoch_values = np.mean(results_matrix, axis=0).round(StatisticsUtils.ROUND_DIGITS)
         mean_epoch_values = StatisticsUtils.to_percentage(mean_epoch_values)
         mean_val_epoch_values = np.mean(val_results_matrix, axis=0).round(StatisticsUtils.ROUND_DIGITS)
-        mean_val_epoch_values = StatisticsUtils.to_percentage(mean_epoch_values)
+        mean_val_epoch_values = StatisticsUtils.to_percentage(mean_val_epoch_values)
 
         return self.__plotter.create_plot(metric, mean_epoch_values, mean_val_epoch_values)
 
