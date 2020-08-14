@@ -21,7 +21,7 @@ class PlottingUtils:
         plt.plot(metric_arr)
         plt.plot(val_metric_arr)
 
-        plt.title(f'model {metric_name}')
+        plt.title(f'model {metric_name} [%]')
         plt.ylabel(metric_name)
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
@@ -38,8 +38,7 @@ class PlottingUtils:
         return uploaded_url
 
     def create_histogram(self, values_arr):
-        percentiles = [x for x in range(5, 100, 5)]
-        percentiles.append(99)
+        percentiles = self.__get_percentiles()
 
         percentiles_values = np.percentile(values_arr, percentiles)
 
@@ -56,13 +55,18 @@ class PlottingUtils:
 
         image_path = self.__save_image("percentile")
         uploaded_url = self.__uploader.upload_image(image_path)
-        self.__plotted_data["perc_accuracy_val"] = percentiles_values
+        self.__plotted_data["percentiles_acc_val"] = percentiles_values
         self.__plotted_data["percentiles"] = percentiles
 
         plt.clf()
         plt.cla()
 
         return uploaded_url
+
+    def __get_percentiles(self):
+        percentiles = [x for x in range(5, 100, 5)]
+        percentiles.append(99)
+        return percentiles
 
     def __save_image(self, metric_name):
         if not os.path.exists(self.__output_dir_path):
