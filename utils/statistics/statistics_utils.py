@@ -71,20 +71,20 @@ class StatisticsUtils:
         return final_values_mean
 
     def get_mean_false_negatives(self):
-        return self.__calculate_mean_from_confusion_matrix(FN).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(FN)
 
     def get_mean_false_positives(self):
-        return self.__calculate_mean_from_confusion_matrix(FP).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(FP)
 
     def get_mean_true_negatives(self):
-        return self.__calculate_mean_from_confusion_matrix(TN).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(TN)
 
     def get_mean_true_positives(self):
-        return self.__calculate_mean_from_confusion_matrix(TP).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(TP)
 
     def __calculate_mean_from_confusion_matrix(self, metric):
         values = [record.history[metric][-1] for record in self.__results]
-        return np.mean(values)
+        return np.mean(values).astype(int)
 
     def get_mean_false_rejection_rate(self):
         return self.__calculate_mean_rate_from_confusion_matrix(FN, TP) * 100  # %
