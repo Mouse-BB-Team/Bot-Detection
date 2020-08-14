@@ -33,7 +33,7 @@ if __name__ == '__main__':
     try:
         model = PiotrModel()
         executor = TaskExecutor(model)
-        result = executor.start_execution(10)
+        result = executor.start_execution(2)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
