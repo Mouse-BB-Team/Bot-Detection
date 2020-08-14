@@ -15,6 +15,7 @@ NOTIFY = environ.get("NOTIFY")
 
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
+    commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
     start_time = datetime.now()
 
     if NOTIFY is not None:
@@ -25,13 +26,13 @@ if __name__ == '__main__':
             .with_commit_hash(f"#{commit_hash}") \
             .with_job_time(start_time) \
             .with_header("RUNNING JOB") \
-            .with_info_message("Starting test job from prometheus") \
+            .with_info_message(f"{commit_msg}") \
             .build()
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
 
     try:
-        model = LightMlModel()
+        model = PiotrModel()
         executor = TaskExecutor(model)
         # result = executor.start_execution(1)
         result = [model.run()]
