@@ -21,7 +21,7 @@ class PiotrModel:
         model.add(layers.Conv2D(64, (3, 3), activation='relu'))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(1, activation='sigmoid'))
+        model.add(layers.Dense(10, activation='sigmoid'))
         model.summary()
 
         base_learning_rate = 0.0001

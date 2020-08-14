@@ -31,9 +31,9 @@ if __name__ == '__main__':
         notifier.notify(slack_simple_msg)
 
     try:
-        model = PiotrModel()
+        model = MlModelExample()
         executor = TaskExecutor(model)
-        result = executor.start_execution(2)
+        result = executor.start_execution(1)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
