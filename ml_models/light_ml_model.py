@@ -75,7 +75,7 @@ class LightMlModel:
 
         model.compile(
             optimizer=tf.keras.optimizers.Adam(),
-            loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+            loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
             metrics=[
                 tf.metrics.BinaryAccuracy(name='accuracy'),
                 tf.metrics.FalsePositives(name='false_positives'),
