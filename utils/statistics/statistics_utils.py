@@ -27,8 +27,6 @@ class StatisticsUtils:
         calculated_statistics[Metric.LOSS_PLOT] = self.create_model_loss_training_plot()
         calculated_statistics[Metric.PERCENTILES_HISTOGRAM] = self.create_model_accuracy_percentile_histogram()
 
-        self.__plotter.save_plotted_data_to_csv()
-
         return calculated_statistics
 
     def create_model_accuracy_training_plot(self):
