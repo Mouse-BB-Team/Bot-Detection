@@ -19,7 +19,7 @@ class CSVWriter:
     def append_data_to_csv(self, columns_names: List[str], *data, csv_out_path=None):
         csv_path = self.__check_csv_path(csv_out_path)
 
-        if self.__is_csv_file_empty(csv_path):
+        if not self.__is_csv_file_empty(csv_path):
             df = pd.read_csv(csv_path)
 
             if self.__is_column_already_in_file(df.keys(), columns_names):
@@ -41,7 +41,7 @@ class CSVWriter:
         return csv_path
 
     def __is_csv_file_empty(self, csv_path):
-        return os.stat(csv_path).st_size != 0
+        return os.stat(csv_path).st_size == 0
 
     def __is_column_already_in_file(self, column_names, columns_from_file):
         return len(set(column_names).intersection(set(columns_from_file)))
