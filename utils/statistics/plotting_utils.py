@@ -4,18 +4,15 @@ import os
 from pathlib import Path
 from utils.imgur_uploader.imgur_uploader import ImgurUploader
 import numpy as np
-from utils.statistics.csv_writer.csv_writer import CSVWriter
+from utils.csv_writer.csv_writer import CSVWriter
 
 
 class PlottingUtils:
-    GROUP_NAME = 'plggpchdyplo'
-
     def __init__(self):
         self.__uploader = ImgurUploader()
         self.__commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
-        self.__group_storage_dir = Path(os.environ['PLG_GROUPS_STORAGE']).joinpath(PlottingUtils.GROUP_NAME)
-        self.__output_dir_path = self.__group_storage_dir.joinpath("outputs")
-        self.__commit_dir_path = self.__output_dir_path.joinpath(self.__commit_hash)
+        self.__results_output_path = Path(os.environ['RESULTS_PATH']).absolute()
+        self.__commit_dir_path = self.__results_output_path.joinpath(self.__commit_hash).absolute()
         self.csv_writer = CSVWriter()
 
     def create_plot(self, metric_name, metric_arr, val_metric_arr):
@@ -46,8 +43,8 @@ class PlottingUtils:
 
         bars = plt.bar(percentiles, percentiles_values_round, width=2.4, align='edge', tick_label=percentiles)
         for bar in bars:
-            yval = bar.get_height()
-            plt.text(bar.get_x(), yval + .005, yval)
+            y_val = bar.get_height()
+            plt.text(bar.get_x(), y_val + .005, y_val)
 
         plt.title(f'model accuracy percentiles histogram')
         plt.ylabel("Accuracy [%]")
@@ -69,10 +66,8 @@ class PlottingUtils:
         return percentiles
 
     def __save_image(self, metric_name):
-        if not os.path.exists(self.__output_dir_path):
-            os.mkdir(self.__output_dir_path)
         if not os.path.exists(self.__commit_dir_path):
-            os.mkdir(self.__commit_dir_path)
+            os.makedirs(self.__commit_dir_path)
 
         image_path = self.__commit_dir_path.joinpath(f"{self.__commit_hash}_{metric_name}_plot.png")
 

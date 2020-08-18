@@ -24,3 +24,5 @@ set-connection-with-PLGrid:
 	read && \
 	git clone git@github.com:Mouse-BB-Team/Bot-Detection.git && \
 	chmod +x ~/Bot-Detection/utils/git-observer/run-plgrid-job.sh";
+	echo 'export NOTIFY=true' >> ~/.bashrc";
+	echo 'export RESULTS_PATH=$PLG_GROUPS_STORAGE/plggpchdyplo/outputs' >> ~/.bashrc";
