@@ -15,24 +15,21 @@ class StatisticsUtils:
         self.__plotter = PlottingUtils()
 
     def calculate_all_statistics(self):
-        calculated_statistics = dict()
-
-        calculated_statistics[Metric.ACC.value] = self.get_mean_accuracy()
-        calculated_statistics[Metric.LOSS.value] = self.get_mean_loss()
-        calculated_statistics[Metric.FAR.value] = self.get_mean_false_acceptance_rate()
-        calculated_statistics[Metric.FRR.value] = self.get_mean_false_rejection_rate()
-        calculated_statistics[Metric.FN.value] = self.get_mean_false_negatives()
-        calculated_statistics[Metric.FP.value] = self.get_mean_false_positives()
-        calculated_statistics[Metric.TN.value] = self.get_mean_true_negatives()
-        calculated_statistics[Metric.TP.value] = self.get_mean_true_positives()
-        calculated_statistics[Metric.ACC_PLOT.value] = self.create_model_accuracy_training_plot()
-        calculated_statistics[Metric.LOSS_PLOT.value] = self.create_model_loss_training_plot()
-        calculated_statistics[Metric.PERCENTILES_HISTOGRAM.value] = self.create_model_accuracy_percentile_histogram()
+        calculated_statistics = {Metric.ACC.value: self.get_mean_accuracy(),
+                                 Metric.LOSS.value: self.get_mean_loss(),
+                                 Metric.FAR.value: self.get_mean_false_acceptance_rate(),
+                                 Metric.FRR.value: self.get_mean_false_rejection_rate(),
+                                 Metric.FN.value: self.get_mean_false_negatives(),
+                                 Metric.FP.value: self.get_mean_false_positives(),
+                                 Metric.TN.value: self.get_mean_true_negatives(),
+                                 Metric.TP.value: self.get_mean_true_positives(),
+                                 Metric.ACC_PLOT.value: self.create_model_accuracy_training_plot(),
+                                 Metric.LOSS_PLOT.value: self.create_model_loss_training_plot(),
+                                 Metric.PERCENTILES_HISTOGRAM.value: self.create_model_accuracy_percentile_histogram()}
 
         commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
 
-        result_terminator_dict = dict()
-        result_terminator_dict["commit_hash"] = commit_hash
+        result_terminator_dict = {"commit_hash": commit_hash}
         result_terminator_dict.update(calculated_statistics)
         result_terminator_dict.pop(Metric.ACC_PLOT.value)
         result_terminator_dict.pop(Metric.LOSS_PLOT.value)
@@ -101,7 +98,8 @@ class StatisticsUtils:
         return StatisticsUtils.to_percentage(self.__calculate_mean_rate_from_confusion_matrix(Metric.FP, Metric.TN))
 
     def __calculate_mean_rate_from_confusion_matrix(self, metric1: Metric, metric2: Metric):
-        single_rate_list = [record.history[metric1.value][-1] / (record.history[metric1.value][-1] + record.history[metric2.value][-1])
+        single_rate_list = [record.history[metric1.value][-1] /
+                            (record.history[metric1.value][-1] + record.history[metric2.value][-1])
                             for record in self.__results]
         return np.mean(single_rate_list).round(StatisticsUtils.ROUND_DIGITS)
 
