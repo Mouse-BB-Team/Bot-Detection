@@ -45,7 +45,6 @@ if __name__ == '__main__':
         statistics = StatisticsUtils(result)
         stat_results = statistics.calculate_all_statistics()
 
-        print(stat_results)
         if NOTIFY is not None:
             slack_results = ResultMessage()
             slack_result_msg = slack_results.new_builder() \
