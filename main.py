@@ -16,7 +16,6 @@ NOTIFY = environ.get("NOTIFY")
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
     commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
-    print(commit_msg)
     start_time = datetime.now()
 
     if NOTIFY is not None:
