@@ -3,7 +3,7 @@
 create_alias()
 {
   echo '[alias]
-        deploy = "!f() { git push \"$1\" \"$2\"; utils/git-observer/./run-commit-execution.sh; }; f"' >> .git/config
+        deploy = "!f() { git push \"$1\" \"$2\"; utils/prometheus_scripts/./run-commit-execution.sh; }; f"' >> .git/config
 }
 
 while true; do
