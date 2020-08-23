@@ -60,7 +60,7 @@ class StatisticsUtils:
         return self.__plotter.create_plot(metric.value, mean_epoch_values, mean_val_epoch_values)
 
     def create_model_accuracy_percentile_histogram(self):
-        acc_results = [record[Metric.ACC.value][-1] for record in self.__results]
+        acc_results = [record[f"val_{Metric.ACC.value}"][-1] for record in self.__results]
         acc_results = np.round(acc_results, StatisticsUtils.ROUND_DIGITS)
         acc_results = StatisticsUtils.to_percentage(acc_results)
         acc_results.sort()
@@ -73,7 +73,7 @@ class StatisticsUtils:
         return StatisticsUtils.to_percentage(self.__calculate_mean_for_metric(Metric.LOSS))
 
     def __calculate_mean_for_metric(self, metric: Metric):
-        final_values = [record[metric.value][-1] for record in self.__results]
+        final_values = [record[f"val_{metric.value}"][-1] for record in self.__results]
         final_values_mean = np.mean(final_values).round(StatisticsUtils.ROUND_DIGITS)
         return final_values_mean
 
@@ -90,7 +90,7 @@ class StatisticsUtils:
         return self.__calculate_mean_from_confusion_matrix(Metric.TP)
 
     def __calculate_mean_from_confusion_matrix(self, metric: Metric):
-        values = [record[metric.value][-1] for record in self.__results]
+        values = [record[f"val_{metric.value}"][-1] for record in self.__results]
         return np.mean(values).astype(int)
 
     def get_mean_false_rejection_rate(self):
@@ -100,8 +100,8 @@ class StatisticsUtils:
         return StatisticsUtils.to_percentage(self.__calculate_mean_rate_from_confusion_matrix(Metric.FP, Metric.TN))
 
     def __calculate_mean_rate_from_confusion_matrix(self, metric1: Metric, metric2: Metric):
-        single_rate_list = [record[metric1.value][-1] /
-                            (record[metric1.value][-1] + record[metric2.value][-1])
+        single_rate_list = [record[f"val_{metric1.value}"][-1] /
+                            (record[f"val_{metric1.value}"][-1] + record[f"val_{metric2.value}"][-1])
                             for record in self.__results]
         return np.mean(single_rate_list).round(StatisticsUtils.ROUND_DIGITS)
 
