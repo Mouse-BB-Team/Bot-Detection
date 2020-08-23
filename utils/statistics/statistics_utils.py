@@ -1,98 +1,108 @@
+import subprocess
 from typing import List
 from tensorflow.keras.callbacks import History
 from utils.statistics.plotting_utils import PlottingUtils
+from utils.statistics.statistic_metrics.statistic_metrics import Metric
+from utils.result_terminator.result_terminator import ResultTerminator
 import numpy as np
-
-ACC = 'accuracy'
-LOSS = 'loss'
-FP = 'false_positives'
-FN = 'false_negatives'
-TN = 'true_negatives'
-TP = 'true_positives'
-FAR = 'false_acceptance_rate'
-FRR = 'false_rejection_rate'
-ROUND_DIGITS = 4
 
 
 class StatisticsUtils:
+    ROUND_DIGITS = 4
+
     def __init__(self, ml_model_results: List):
         self.__results: List[History] = ml_model_results
         self.__plotter = PlottingUtils()
 
     def calculate_all_statistics(self):
-        calculated_statistics = dict()
+        calculated_statistics = {Metric.ACC.value: self.get_mean_accuracy(),
+                                 Metric.LOSS.value: self.get_mean_loss(),
+                                 Metric.FAR.value: self.get_mean_false_acceptance_rate(),
+                                 Metric.FRR.value: self.get_mean_false_rejection_rate(),
+                                 Metric.FN.value: self.get_mean_false_negatives(),
+                                 Metric.FP.value: self.get_mean_false_positives(),
+                                 Metric.TN.value: self.get_mean_true_negatives(),
+                                 Metric.TP.value: self.get_mean_true_positives(),
+                                 Metric.ACC_PLOT.value: self.create_model_accuracy_training_plot(),
+                                 Metric.LOSS_PLOT.value: self.create_model_loss_training_plot(),
+                                 Metric.PERCENTILES_HISTOGRAM.value: self.create_model_accuracy_percentile_histogram()}
 
-        calculated_statistics[ACC] = self.get_mean_accuracy()
-        calculated_statistics[LOSS] = self.get_mean_loss()
-        calculated_statistics[FAR] = self.get_mean_false_acceptance_rate()
-        calculated_statistics[FRR] = self.get_mean_false_rejection_rate()
-        calculated_statistics[FN] = self.get_mean_false_negatives()
-        calculated_statistics[FP] = self.get_mean_false_positives()
-        calculated_statistics[TN] = self.get_mean_true_negatives()
-        calculated_statistics[TP] = self.get_mean_true_positives()
-        calculated_statistics[f"{ACC}_plot"] = self.create_model_accuracy_training_plot()
-        calculated_statistics[f"{LOSS}_plot"] = self.create_model_loss_training_plot()
-        calculated_statistics["percentiles_hist"] = self.create_model_accuracy_percentile_histogram()
+        commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
 
-        self.__plotter.save_plotted_data_to_csv()
+        result_terminator_dict = {"commit_hash": commit_hash}
+        result_terminator_dict.update(calculated_statistics)
+        result_terminator_dict.pop(Metric.ACC_PLOT.value)
+        result_terminator_dict.pop(Metric.LOSS_PLOT.value)
+        result_terminator_dict.pop(Metric.PERCENTILES_HISTOGRAM.value)
+
+        terminator = ResultTerminator([*result_terminator_dict.keys()])
+        terminator.terminate(result_terminator_dict)
 
         return calculated_statistics
 
     def create_model_accuracy_training_plot(self):
-        return self.__create_model_training_plot(ACC)
+        return self.__create_model_training_plot(Metric.ACC)
 
     def create_model_loss_training_plot(self):
-        return self.__create_model_training_plot(LOSS)
+        return self.__create_model_training_plot(Metric.LOSS)
 
-    def __create_model_training_plot(self, metric):
-        results_matrix = [record.history[metric] for record in self.__results]
-        val_results_matrix = [record.history[f'val_{metric}'] for record in self.__results]
+    def __create_model_training_plot(self, metric: Metric):
+        results_matrix = [record.history[metric.value] for record in self.__results]
+        val_results_matrix = [record.history[f'val_{metric.value}'] for record in self.__results]
 
-        mean_epoch_values = np.mean(results_matrix, axis=0).round(ROUND_DIGITS) * 100   # %
-        mean_val_epoch_values = np.mean(val_results_matrix, axis=0).round(ROUND_DIGITS) * 100   # %
+        mean_epoch_values = np.mean(results_matrix, axis=0).round(StatisticsUtils.ROUND_DIGITS)
+        mean_epoch_values = StatisticsUtils.to_percentage(mean_epoch_values)
+        mean_val_epoch_values = np.mean(val_results_matrix, axis=0).round(StatisticsUtils.ROUND_DIGITS)
+        mean_val_epoch_values = StatisticsUtils.to_percentage(mean_val_epoch_values)
 
-        return self.__plotter.create_plot(metric, mean_epoch_values, mean_val_epoch_values)
+        return self.__plotter.create_plot(metric.value, mean_epoch_values, mean_val_epoch_values)
 
     def create_model_accuracy_percentile_histogram(self):
-        acc_results = [record.history[ACC][-1] for record in self.__results]
-        acc_results = np.round(acc_results, ROUND_DIGITS) * 100     # %
+        acc_results = [record.history[Metric.ACC.value][-1] for record in self.__results]
+        acc_results = np.round(acc_results, StatisticsUtils.ROUND_DIGITS)
+        acc_results = StatisticsUtils.to_percentage(acc_results)
         acc_results.sort()
         return self.__plotter.create_histogram(acc_results)
 
     def get_mean_accuracy(self):
-        return self.__calculate_mean_for_metric(ACC) * 100  # %
+        return StatisticsUtils.to_percentage(self.__calculate_mean_for_metric(Metric.ACC))
 
     def get_mean_loss(self):
-        return self.__calculate_mean_for_metric(LOSS) * 100  # %
+        return StatisticsUtils.to_percentage(self.__calculate_mean_for_metric(Metric.LOSS))
 
-    def __calculate_mean_for_metric(self, metric):
-        final_values = [record.history[metric][-1] for record in self.__results]
-        final_values_mean = np.mean(final_values).round(ROUND_DIGITS)
+    def __calculate_mean_for_metric(self, metric: Metric):
+        final_values = [record.history[metric.value][-1] for record in self.__results]
+        final_values_mean = np.mean(final_values).round(StatisticsUtils.ROUND_DIGITS)
         return final_values_mean
 
     def get_mean_false_negatives(self):
-        return self.__calculate_mean_from_confusion_matrix(FN).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(Metric.FN)
 
     def get_mean_false_positives(self):
-        return self.__calculate_mean_from_confusion_matrix(FP).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(Metric.FP)
 
     def get_mean_true_negatives(self):
-        return self.__calculate_mean_from_confusion_matrix(TN).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(Metric.TN)
 
     def get_mean_true_positives(self):
-        return self.__calculate_mean_from_confusion_matrix(TP).astype(int)
+        return self.__calculate_mean_from_confusion_matrix(Metric.TP)
 
-    def __calculate_mean_from_confusion_matrix(self, metric):
-        values = [record.history[metric][-1] for record in self.__results]
-        return np.mean(values)
+    def __calculate_mean_from_confusion_matrix(self, metric: Metric):
+        values = [record.history[metric.value][-1] for record in self.__results]
+        return np.mean(values).astype(int)
 
     def get_mean_false_rejection_rate(self):
-        return self.__calculate_mean_rate_from_confusion_matrix(FN, TP) * 100  # %
+        return StatisticsUtils.to_percentage(self.__calculate_mean_rate_from_confusion_matrix(Metric.FN, Metric.TP))
 
     def get_mean_false_acceptance_rate(self):
-        return self.__calculate_mean_rate_from_confusion_matrix(FP, TN) * 100  # %
+        return StatisticsUtils.to_percentage(self.__calculate_mean_rate_from_confusion_matrix(Metric.FP, Metric.TN))
 
-    def __calculate_mean_rate_from_confusion_matrix(self, metric1, metric2):
-        single_rate_list = [record.history[metric1][-1] / (record.history[metric1][-1] + record.history[metric2][-1])
+    def __calculate_mean_rate_from_confusion_matrix(self, metric1: Metric, metric2: Metric):
+        single_rate_list = [record.history[metric1.value][-1] /
+                            (record.history[metric1.value][-1] + record.history[metric2.value][-1])
                             for record in self.__results]
-        return np.mean(single_rate_list).round(ROUND_DIGITS)
+        return np.mean(single_rate_list).round(StatisticsUtils.ROUND_DIGITS)
+
+    @staticmethod
+    def to_percentage(value):
+        return value * 100
