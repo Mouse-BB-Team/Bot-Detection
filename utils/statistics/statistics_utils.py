@@ -1,9 +1,11 @@
 import subprocess
+from pathlib import Path
 from typing import List, Dict
 from utils.statistics.plotting_utils import PlottingUtils
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
 from utils.result_terminator.result_terminator import ResultTerminator
 import numpy as np
+from utils.csv_writer.csv_writer import CSVWriter
 
 
 class StatisticsUtils:
@@ -61,6 +63,11 @@ class StatisticsUtils:
 
     def create_model_accuracy_percentile_histogram(self):
         acc_results = [record[f"val_{Metric.ACC.value}"][-1] for record in self.__results]
+        import os
+        commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
+        path1 = Path(os.environ['RESULTS_PATH']).absolute()
+        path = path1.joinpath(commit_hash).joinpath("models_acc.csv").absolute()
+        CSVWriter().append_data_to_csv(["No.", "model_accuracy"], range(10), acc_results, csv_out_path=path)
         acc_results = np.round(acc_results, StatisticsUtils.ROUND_DIGITS)
         acc_results = StatisticsUtils.to_percentage(acc_results)
         acc_results.sort()

@@ -38,6 +38,9 @@ if __name__ == '__main__':
         executor = TaskExecutor(model)
         result = executor.start_execution(10)
 
+        for r in result:
+            print(r)
+
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
 
