@@ -68,7 +68,7 @@ class MlModelExample:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        initial_epochs = 5
+        initial_epochs = 2
         validation_steps = 5
 
         loss0, accuracy0, fp0, tn0, fn0, tp0 = model.evaluate(validation_batches, steps=validation_steps)
@@ -106,7 +106,7 @@ class MlModelExample:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        fine_tune_epochs = 5
+        fine_tune_epochs = 2
         total_epochs = initial_epochs + fine_tune_epochs
 
         history_fine = model.fit(train_batches,
@@ -114,7 +114,7 @@ class MlModelExample:
                                  initial_epoch=history.epoch[-1],
                                  validation_data=validation_batches)
 
-        return history_fine
+        return history_fine.history
 
     @staticmethod
     def __load_example_data():

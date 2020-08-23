@@ -27,12 +27,13 @@ if __name__ == '__main__':
             .with_job_time(start_time) \
             .with_header("RUNNING JOB") \
             .with_info_message(f"{commit_msg}") \
+            .with_summary(f"Running job: {commit_msg}") \
             .build()
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
 
     try:
-        model = PiotrModel()
+        model = MlModelExample()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
         # result = [model.run()]
