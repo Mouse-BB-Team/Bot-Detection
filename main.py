@@ -33,7 +33,7 @@ if __name__ == '__main__':
         notifier.notify(slack_simple_msg)
 
     try:
-        model = MlModelExample()
+        model = LightMlModel()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
         # result = [model.run()]

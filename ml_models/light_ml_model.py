@@ -106,4 +106,4 @@ class LightMlModel:
 
         print(prediction_result)
 
-        return history
+        return history.history
