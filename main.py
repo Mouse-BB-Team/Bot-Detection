@@ -9,8 +9,10 @@ from utils.slack_notifier.message.result_slack_message import ResultMessage
 from utils.statistics.statistics_utils import StatisticsUtils
 from utils.slack_notifier.message.color import Color
 from datetime import datetime
+from utils.result_terminator.result_terminator import ResultTerminator
 import subprocess
 from os import environ
+from utils.statistics.statistic_metrics.statistic_metrics import Metric
 
 NOTIFY = environ.get("NOTIFY")
 
@@ -49,6 +51,8 @@ if __name__ == '__main__':
         statistics = StatisticsUtils(result)
         print(statistics)
 
+        acc = statistics.get_mean_accuracy()
+        loss = statistics.get_mean_loss()
         if NOTIFY is not None:
             slack_results = ResultMessage()
             slack_result_msg = slack_results.new_builder() \
@@ -56,8 +60,8 @@ if __name__ == '__main__':
                 .with_job_time(f"{job_time}") \
                 .with_commit_hash(f"#{commit_hash}") \
                 .with_reporter("plgkamilkalis") \
-                .with_accuracy(f"{statistics.get_mean_accuracy()}%") \
-                .with_loss(f"{statistics.get_mean_loss()}%") \
+                .with_accuracy(f"{acc}%") \
+                .with_loss(f"{loss}%") \
                 .with_accuracy_chart(f"{statistics.create_model_accuracy_training_plot()}") \
                 .with_loss_chart(f"{statistics.create_model_loss_training_plot()}") \
                 .with_percentile_chart(f"{statistics.create_model_accuracy_percentile_histogram()}") \
@@ -71,6 +75,12 @@ if __name__ == '__main__':
                 # .with_true_positives(f"{statistics.get_mean_true_positives()}") \
 
             notifier.notify(slack_result_msg)
+
+        results_dict = {"commit_hash": commit_hash,
+                        Metric.ACC.value: acc,
+                        Metric.LOSS.value: loss}
+
+        ResultTerminator(["commit_hash", Metric.ACC.value, Metric.LOSS.value]).terminate(results_dict)
 
     except Exception as e:
         if NOTIFY is not None:
