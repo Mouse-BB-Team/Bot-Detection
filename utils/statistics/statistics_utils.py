@@ -1,5 +1,5 @@
 import subprocess
-from typing import List
+from typing import List, Dict
 from utils.statistics.plotting_utils import PlottingUtils
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
 from utils.result_terminator.result_terminator import ResultTerminator
@@ -10,7 +10,7 @@ class StatisticsUtils:
     ROUND_DIGITS = 4
 
     def __init__(self, ml_model_results: List):
-        self.__results: List[dict] = ml_model_results
+        self.__results: List[Dict] = ml_model_results
         self.__plotter = PlottingUtils()
 
     def calculate_all_statistics(self):
@@ -26,18 +26,21 @@ class StatisticsUtils:
                                  Metric.LOSS_PLOT.value: self.create_model_loss_training_plot(),
                                  Metric.PERCENTILES_HISTOGRAM.value: self.create_model_accuracy_percentile_histogram()}
 
+        self.__terminate_results(calculated_statistics)
+
+        return calculated_statistics
+
+    def __terminate_results(self, stat_dict):
         commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
 
         result_terminator_dict = {"commit_hash": commit_hash}
-        result_terminator_dict.update(calculated_statistics)
+        result_terminator_dict.update(stat_dict)
         result_terminator_dict.pop(Metric.ACC_PLOT.value)
         result_terminator_dict.pop(Metric.LOSS_PLOT.value)
         result_terminator_dict.pop(Metric.PERCENTILES_HISTOGRAM.value)
 
         terminator = ResultTerminator([*result_terminator_dict.keys()])
         terminator.terminate(result_terminator_dict)
-
-        return calculated_statistics
 
     def create_model_accuracy_training_plot(self):
         return self.__create_model_training_plot(Metric.ACC)
