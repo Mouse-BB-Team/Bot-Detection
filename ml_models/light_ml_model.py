@@ -42,10 +42,6 @@ class LightMlModel:
                                               'https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
         imagenet_labels = np.array(open(labels_path).read().splitlines())
 
-        predicted_class_name = imagenet_labels[predicted_class]
-
-        print(predicted_class_name)
-
         data_root = tf.keras.utils.get_file(
             'flower_photos', 'https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
             untar=True)
@@ -53,36 +49,26 @@ class LightMlModel:
         image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1 / 255)
         image_data = image_generator.flow_from_directory(str(data_root), target_size=LightMlModel.IMAGE_SHAPE)
 
-        for image_batch, label_batch in image_data:
-            break
+        feature_extractor_layer = hub.KerasLayer(LightMlModel.feature_extractor_url, input_shape=(224, 224, 3))
 
-        result_batch = classifier.predict(image_batch)
-
-        predicted_class_names = imagenet_labels[np.argmax(result_batch, axis=-1)]
-
-        feature_extractor_layer = hub.KerasLayer(LightMlModel.feature_extractor_url,
-                                                 input_shape=(224, 224, 3))
-
-        feature_batch = feature_extractor_layer(image_batch)
         feature_extractor_layer.trainable = False
 
         model = tf.keras.Sequential([
             feature_extractor_layer,
-            layers.Dense(image_data.num_classes)
+            layers.Dense(image_data.num_classes),
+            layers.Dense(1, activation='sigmoid')
         ])
 
-        predictions = model(image_batch)
-
-        model.compile(
-            optimizer=tf.keras.optimizers.Adam(),
-            loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=[
-                tf.metrics.BinaryAccuracy(name='accuracy'),
-                tf.metrics.FalsePositives(name='false_positives'),
-                tf.metrics.TrueNegatives(name='true_negatives'),
-                tf.metrics.FalseNegatives(name='false_negatives'),
-                tf.metrics.TruePositives(name='true_positives')
-            ])
+        base_learning_rate = 0.0001
+        model.compile(loss=tf.losses.BinaryCrossentropy(from_logits=True),
+                      optimizer=tf.optimizers.RMSprop(lr=base_learning_rate / 10),
+                      metrics=[
+                          tf.metrics.BinaryAccuracy(name='accuracy'),
+                          tf.metrics.FalsePositives(name='false_positives'),
+                          tf.metrics.TrueNegatives(name='true_negatives'),
+                          tf.metrics.FalseNegatives(name='false_negatives'),
+                          tf.metrics.TruePositives(name='true_positives')
+                      ])
 
         steps_per_epoch = np.ceil(image_data.samples / image_data.batch_size)
 
@@ -91,19 +77,5 @@ class LightMlModel:
         history = model.fit(image_data, epochs=2,
                             steps_per_epoch=steps_per_epoch,
                             callbacks=[batch_stats_callback])
-
-        class_names = sorted(image_data.class_indices.items(), key=lambda pair: pair[1])
-        class_names = np.array([key.title() for key, value in class_names])
-        print(class_names)
-
-        predicted_batch = model.predict(image_batch)
-        predicted_id = np.argmax(predicted_batch, axis=-1)
-        predicted_label_batch = class_names[predicted_id]
-
-        label_id = np.argmax(label_batch, axis=-1)
-
-        prediction_result = ["correct" if predicted_id[n] == label_id[n] else "wrong" for n in range(30)]
-
-        print(prediction_result)
 
         return history.history
