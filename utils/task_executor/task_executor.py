@@ -25,7 +25,7 @@ class TaskExecutor:
                 for task_id in range(number_of_task_to_run)
             }
 
-            for future in concurrent.futures.as_completed(futures_map):
+            for future in concurrent.futures.as_completed(futures_map.keys()):
                 try:
                     future_result = future.result()
                     final_results.append(future_result)

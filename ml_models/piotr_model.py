@@ -21,7 +21,7 @@ class PiotrModel:
         model.add(layers.Conv2D(64, (3, 3), activation='relu'))
         model.add(layers.Flatten())
         model.add(layers.Dense(64, activation='relu'))
-        model.add(layers.Dense(10, activation='sigmoid'))
+        model.add(layers.Dense(1, activation='sigmoid'))
         model.summary()
 
         base_learning_rate = 0.0001
@@ -35,10 +35,10 @@ class PiotrModel:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        history = model.fit(train_images, train_labels, epochs=10,
+        history = model.fit(train_images, train_labels, epochs=5,
                             validation_data=(test_images, test_labels))
         loss0, accuracy0, fp0, tn0, fn0, tp0 = model.evaluate(test_images, test_labels, verbose=2)
 
         print(loss0, accuracy0, fp0, tn0, fn0, tp0)
 
-        return history
+        return history.history

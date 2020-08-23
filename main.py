@@ -15,7 +15,8 @@ NOTIFY = environ.get("NOTIFY")
 
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
-    # commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
+    commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
+    print(commit_msg)
     start_time = datetime.now()
 
     if NOTIFY is not None:
@@ -26,7 +27,7 @@ if __name__ == '__main__':
             .with_commit_hash(f"#{commit_hash}") \
             .with_job_time(start_time) \
             .with_header("RUNNING JOB") \
-            .with_info_message(f"commit_msg") \
+            .with_info_message(f"{commit_msg}") \
             .build()
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
@@ -34,8 +35,8 @@ if __name__ == '__main__':
     try:
         model = PiotrModel()
         executor = TaskExecutor(model)
-        # result = executor.start_execution(1)
-        result = [model.run()]
+        result = executor.start_execution(2)
+        # result = [model.run()]
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -45,6 +46,7 @@ if __name__ == '__main__':
         statistics = StatisticsUtils(result)
         stat_results = statistics.calculate_all_statistics()
 
+        print(stat_results)
         if NOTIFY is not None:
             slack_results = ResultMessage()
             slack_result_msg = slack_results.new_builder() \
