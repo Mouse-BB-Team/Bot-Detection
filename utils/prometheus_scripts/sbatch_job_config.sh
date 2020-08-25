@@ -13,7 +13,7 @@
 
 ## Partition
 #SBATCH -p plgrid-gpu
-#SBATCH --gres=gpu:2
+#SBATCH --gres=gpu:3
 
 
 module add plgrid/tools/python/3.8
