@@ -1,4 +1,5 @@
 from ml_models.piotr_model import PiotrModel
+import tensorflow as tf
 from ml_models.light_ml_model import LightMlModel
 from ml_models.ml_model import MlModelExample
 from ml_models.convolutional_network import ConvolutionalNetwork
@@ -36,12 +37,10 @@ if __name__ == '__main__':
         notifier.notify(slack_simple_msg)
 
     try:
+        print(tf.config.list_physical_devices('GPU'))
         model = ConvolutionalNetwork()
         executor = TaskExecutor(model)
-        result = executor.start_execution(10)
-
-        for r in result:
-            print(r)
+        result = executor.start_execution(5)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')

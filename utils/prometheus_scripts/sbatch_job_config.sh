@@ -6,14 +6,14 @@
 ## Node count, 1 by default
 #SBATCH -N 1
 
-#SBATCH --cpus-per-task=24
+##SBATCH --cpus-per-task=24
 
 ## Job time
 #SBATCH --time=01:00:00
 
 ## Partition
-#SBATCH -p plgrid-testing
-##SBATCH --gres=gpu
+#SBATCH -p plgrid-gpu
+#SBATCH --gres=gpu:5
 
 
 module add plgrid/tools/python/3.8
