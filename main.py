@@ -40,7 +40,7 @@ if __name__ == '__main__':
         print(tf.config.list_physical_devices('GPU'))
         model = ConvolutionalNetwork()
         executor = TaskExecutor(model)
-        result = executor.start_execution(5)
+        result = executor.start_execution(10)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
