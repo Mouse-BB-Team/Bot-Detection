@@ -4,7 +4,7 @@
 #SBATCH -A plgcholdadyplomy
 
 ## Node count, 1 by default
-##SBATCH -N 1
+#SBATCH -N 2
 
 ##SBATCH --cpus-per-task=24
 
