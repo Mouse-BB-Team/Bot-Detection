@@ -4,7 +4,7 @@
 #SBATCH -A plgcholdadyplomy
 
 ## Node count, 1 by default
-#SBATCH -N 5
+#SBATCH -N 1
 
 ##SBATCH --cpus-per-task=24
 
@@ -18,6 +18,7 @@
 
 module add plgrid/tools/python/3.8
 module add plgrid/libs/tensorflow-gpu/2.2.0-python-3.8
+module add plgrid/apps/cuda
 
 cd $SLURM_SUBMIT_DIR
 cd ../..

@@ -19,7 +19,7 @@ class TaskExecutor:
 
         final_results = []
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ProcessPoolExecutor() as executor:
             futures_map = {
                 executor.submit(self._run_single_task, self.ml_model, task_id): f"task_{task_id}"
                 for task_id in range(number_of_task_to_run)
