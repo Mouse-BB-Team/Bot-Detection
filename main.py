@@ -37,7 +37,10 @@ if __name__ == '__main__':
         notifier.notify(slack_simple_msg)
 
     try:
+        print("--------------")
         print(tf.config.list_physical_devices('GPU'))
+        print("--------------")
+
         model = ConvolutionalNetwork()
         executor = TaskExecutor(model)
         result = executor.start_execution(2)
@@ -48,7 +51,6 @@ if __name__ == '__main__':
         job_time = end_time - start_time
 
         statistics = StatisticsUtils(result)
-        print(statistics)
 
         acc = statistics.get_mean_accuracy()
         loss = statistics.get_mean_loss()
