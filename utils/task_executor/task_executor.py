@@ -32,6 +32,7 @@ class TaskExecutor:
                 except Exception as e:
                     # Think about how to handle an error while executing ml model
                     self.__logger.error("Error while evaluating %s: %s", futures_map[future], e)
+                    raise e
 
         return final_results
 
