@@ -6,6 +6,11 @@
 ## Node count, 1 by default
 #SBATCH -N 1
 
+#SBATCH --cpus-per-task=24
+
+#SBATCH --mem=5GB
+#SBATCH --mem-per-cpu=5GB
+
 ## Job time
 #SBATCH --time=01:00:00
 
