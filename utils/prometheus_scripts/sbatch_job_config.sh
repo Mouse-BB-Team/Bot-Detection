@@ -20,7 +20,7 @@
 
 module add plgrid/tools/python/3.8
 module add plgrid/libs/tensorflow-gpu/2.2.0-python-3.8
-module add plgrid/apps/cuda/7
+#module add plgrid/apps/cuda/7
 
 cd $SLURM_SUBMIT_DIR
 cd ../..
