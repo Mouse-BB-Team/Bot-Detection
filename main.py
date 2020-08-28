@@ -20,13 +20,14 @@ NOTIFY = environ.get("NOTIFY")
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
     commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
+    reporter = subprocess.check_output(['whoami']).decode().strip()
     start_time = datetime.now()
 
     if NOTIFY is not None:
         slack_simple = SimpleMessage()
         slack_simple_msg = slack_simple.new_builder() \
             .with_color(Color.BLUE) \
-            .with_reporter("plgkamilkalis") \
+            .with_reporter(f"{reporter}") \
             .with_commit_hash(f"#{commit_hash}") \
             .with_job_time(start_time) \
             .with_header("RUNNING JOB") \
@@ -60,7 +61,7 @@ if __name__ == '__main__':
                 .with_color(Color.GREEN) \
                 .with_job_time(f"{job_time}") \
                 .with_commit_hash(f"#{commit_hash}") \
-                .with_reporter("plgkamilkalis") \
+                .with_reporter(f"{reporter}") \
                 .with_accuracy(f"{acc}%") \
                 .with_loss(f"{loss}%") \
                 .with_accuracy_chart(f"{statistics.create_model_accuracy_training_plot()}") \
@@ -88,7 +89,7 @@ if __name__ == '__main__':
             crashed_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
             slack_err_msg = slack_simple.new_builder() \
                 .with_color(Color.RED) \
-                .with_reporter("plgkamilkalis") \
+                .with_reporter(f"{reporter}") \
                 .with_commit_hash(f"#{commit_hash}") \
                 .with_job_time(crashed_time) \
                 .with_header("CRASHED JOB") \
