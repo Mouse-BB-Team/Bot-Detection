@@ -6,7 +6,7 @@ export PYTHONPATH=$PYTHONPATH:"$projectDir"
 lastCommitHash=$(git rev-parse --short HEAD)
 currentUser=$(whoami)
 currDate=$(date "+%d.%m.%y|%H:%M:%S")
-output_path="../outputs"
+output_path="outputs"
 
 if [ ! -d $output_path ]
 then
