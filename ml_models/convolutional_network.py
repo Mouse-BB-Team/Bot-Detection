@@ -1,10 +1,8 @@
-import tensorflow as tf
-
-from tensorflow.keras import datasets, layers, models
-
-
 class ConvolutionalNetwork:
     def run(self):
+        import tensorflow as tf
+        from tensorflow.keras import datasets, layers, models
+
         if tf.test.gpu_device_name():
             print('Default GPU Device:{}'.format(tf.test.gpu_device_name()))
         else:
