@@ -42,6 +42,7 @@ if __name__ == '__main__':
         print(tf.config.list_physical_devices('GPU'))
         print("--------------")
 
+
         model = ConvolutionalNetwork()
         executor = TaskExecutor(model)
         result = executor.start_execution(1)
