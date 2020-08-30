@@ -38,9 +38,8 @@ if __name__ == '__main__':
 
     try:
         model = ConvolutionalNetwork()
-        # executor = TaskExecutor(model)
-        # result = executor.start_execution(2)
-        result = [model.run(), model.run()]
+        executor = TaskExecutor(model)
+        result = executor.start_execution(1)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
