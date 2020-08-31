@@ -52,9 +52,6 @@ if __name__ == '__main__':
 
     gpus = q.get()
 
-    gpus = [device.name for device in gpus]
-    gpus = [re.sub('physical_device', 'device', device) for device in gpus]
-
     try:
         model = ConvolutionalNetwork()
 
