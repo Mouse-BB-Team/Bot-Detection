@@ -39,18 +39,21 @@ if __name__ == '__main__':
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
 
-    def obtain_gpus(q):
-        import tensorflow as tf
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        print(gpus)
-        q.put(gpus)
+    # def obtain_gpus(q):
+    #     import tensorflow as tf
+    #     gpus = tf.config.experimental.list_physical_devices('GPU')
+    #     print(gpus)
+    #     q.put(gpus)
+    #
+    # q = multiprocessing.Queue()
+    # p = multiprocessing.Process(target=obtain_gpus, args=(q,))
+    # p.start()
+    # p.join()
 
-    q = multiprocessing.Queue()
-    p = multiprocessing.Process(target=obtain_gpus, args=(q,))
-    p.start()
-    p.join()
 
-    gpus = q.get()
+    # gpus = q.get()
+
+    gpus = ['/device:GPU:0', '/device:GPU:1']
 
     try:
         model = ConvolutionalNetwork()
