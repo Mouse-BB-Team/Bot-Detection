@@ -1,13 +1,9 @@
 class ConvolutionalNetwork:
-    def run(self):
+    def run(self, card):
         import tensorflow as tf
         from tensorflow.keras import datasets, layers, models
 
-        if tf.test.gpu_device_name():
-            print('Default GPU Device:{}'.format(tf.test.gpu_device_name()))
-        else:
-            print("Please install GPU version of TF")
-
+        with tf.device(card):
             (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 
             # Normalize pixel values to be between 0 and 1

@@ -1,3 +1,5 @@
+import multiprocessing
+
 from ml_models.piotr_model import PiotrModel
 from ml_models.light_ml_model import LightMlModel
 from ml_models.ml_model import MlModelExample
@@ -36,10 +38,24 @@ if __name__ == '__main__':
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
 
+    def obtain_gpus(q):
+        import tensorflow as tf
+        gpus = tf.config.experimental.list_physical_devices('GPU')
+        print(gpus)
+        q.put(gpus)
+
+    q = multiprocessing.Queue()
+    p = multiprocessing.Process(target=obtain_gpus, args=(q,))
+    p.start()
+    p.join()
+
+    gpus = q.get()
+
     try:
         model = ConvolutionalNetwork()
-        executor = TaskExecutor(model)
-        result = executor.start_execution(2)
+
+        executor = TaskExecutor(model, gpus)
+        result = executor.start_execution(len(gpus))
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')

@@ -7,9 +7,10 @@ logging.config.fileConfig(logger_config_path)
 
 
 class TaskExecutor:
-    def __init__(self, ml_model):
+    def __init__(self, ml_model, card_pool):
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.ml_model = ml_model
+        self.card_pool = card_pool
 
     def start_execution(self, number_of_task_to_run=30):
         if number_of_task_to_run <= 0:
@@ -38,5 +39,5 @@ class TaskExecutor:
 
     def _run_single_task(self, model, task_id):
         self.__logger.info("Running task id %d...", task_id)
-        execution_result = model.run()
+        execution_result = model.run(self.card_pool.pop())
         return execution_result
