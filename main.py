@@ -1,4 +1,5 @@
 import multiprocessing
+import re
 
 from ml_models.piotr_model import PiotrModel
 from ml_models.light_ml_model import LightMlModel
@@ -52,6 +53,7 @@ if __name__ == '__main__':
     gpus = q.get()
 
     gpus = [device.name for device in gpus]
+    gpus = [re.sub('physical_device', 'device', device) for device in gpus]
 
     try:
         model = ConvolutionalNetwork()
