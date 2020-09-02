@@ -1,22 +1,11 @@
-import re
-
 class ConvolutionalNetwork:
     def run(self, card):
         import tensorflow as tf
         from tensorflow.keras import datasets, layers, models
 
-        devices = tf.config.experimental.get_visible_devices('GPU')
-        # tf.config.experimental.set_memory_growth(card, True)
-        tf.config.experimental.set_virtual_device_configuration(
-            devices[0],
-            [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=2048)])
-        tf.config.experimental.set_virtual_device_configuration(
-            devices[1],
-            [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=2048)])
+        tf.debugging.set_log_device_placement(True)
 
-        logical_gpus = tf.config.experimental.list_logical_devices('GPU')[0]
-
-        with tf.device(logical_gpus.name):
+        with tf.device(card):
             (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 
             # Normalize pixel values to be between 0 and 1

@@ -53,13 +53,13 @@ if __name__ == '__main__':
 
     # gpus = q.get()
 
-    gpus = ['/device:GPU:0', '/device:GPU:1']
+    cards = ['/device:GPU:0', '/device:GPU:1']
 
     try:
         model = ConvolutionalNetwork()
 
-        executor = TaskExecutor(model, gpus)
-        result = executor.start_execution(len(gpus))
+        executor = TaskExecutor(model, cards)
+        result = executor.start_execution(2)
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
