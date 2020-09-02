@@ -18,6 +18,7 @@ from os import environ
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
 
 NOTIFY = environ.get("NOTIFY")
+CUDA_VISIBLE_DEVICES = environ.get("CUDA_VISIBLE_DEVICES")
 
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
@@ -50,7 +51,9 @@ if __name__ == '__main__':
     # p.start()
     # p.join()
 
-
+    print("######################## CUDA_VISIBLE_DEVICES #########################")
+    print(CUDA_VISIBLE_DEVICES)
+    print('#######################################################################')
     # gpus = q.get()
 
     cards = ['/device:GPU:0', '/device:GPU:1']
