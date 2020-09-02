@@ -3,6 +3,9 @@ class ConvolutionalNetwork:
         import tensorflow as tf
         from tensorflow.keras import datasets, layers, models
 
+        print("############# CARD ##############")
+        print(card)
+
         tf.debugging.set_log_device_placement(True)
 
         with tf.device(card):
