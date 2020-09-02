@@ -13,8 +13,8 @@
 #SBATCH --time=00:10:00
 
 ## Partition
-#SBATCH -p plgrid-gpu-v100
-#SBATCH --gres=gpu:8
+#SBATCH -p plgrid-gpu
+#SBATCH --gres=gpu:2
 
 
 module add plgrid/tools/python/3.8
