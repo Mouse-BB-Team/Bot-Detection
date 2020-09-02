@@ -6,7 +6,7 @@ class ConvolutionalNetwork:
         print("############# CARD ##############")
         print(card)
 
-        tf.debugging.set_log_device_placement(True)
+        # tf.debugging.set_log_device_placement(True)
 
         with tf.device(card):
             (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
