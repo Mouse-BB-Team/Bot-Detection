@@ -4,17 +4,17 @@
 #SBATCH -A plgcholdadyplomy
 
 ## Node count, 1 by default
-#SBATCH -N 2
+#SBATCH -N 1
 
-#SBATCH --cpus-per-task=24
+#SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=5GB
 
 ## Job time
 #SBATCH --time=00:10:00
 
 ## Partition
-#SBATCH -p plgrid-gpu
-#SBATCH --gres=gpu:2
+#SBATCH -p plgrid-gpu-v100
+#SBATCH --gres=gpu:8
 
 
 module add plgrid/tools/python/3.8

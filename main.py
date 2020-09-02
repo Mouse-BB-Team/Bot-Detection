@@ -16,6 +16,7 @@ from utils.result_terminator.result_terminator import ResultTerminator
 import subprocess
 from os import environ
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
+import tensorflow as tf
 
 NOTIFY = environ.get("NOTIFY")
 CUDA_VISIBLE_DEVICES = environ.get("CUDA_VISIBLE_DEVICES")
@@ -56,13 +57,15 @@ if __name__ == '__main__':
     print('#######################################################################')
     # gpus = q.get()
 
-    cards = ['/device:GPU:0', '/device:GPU:1']
-
     try:
-        model = ConvolutionalNetwork()
+        result = []
 
-        executor = TaskExecutor(model, cards)
-        result = executor.start_execution(2)
+        mirrored_strategy = tf.distribute.MirroredStrategy()
+
+        for i in range(5):
+            with mirrored_strategy.scope():
+                model = ConvolutionalNetwork()
+                result.append(model.run())
 
         end_time = datetime.now()
         end_time_str = end_time.strftime('%Y-%m-%d %H:%M:%S.%f')
