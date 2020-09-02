@@ -22,7 +22,7 @@ class TaskExecutor:
 
         with concurrent.futures.ProcessPoolExecutor() as executor:
             futures_map = {
-                executor.submit(self._run_single_task, self.ml_model, task_id): f"task_{task_id}"
+                executor.submit(self._run_single_task, self.ml_model, task_id, self.cards.pop()): f"task_{task_id}"
                 for task_id in range(number_of_task_to_run)
             }
 
@@ -37,7 +37,7 @@ class TaskExecutor:
 
         return final_results
 
-    def _run_single_task(self, model, task_id):
+    def _run_single_task(self, model, task_id, card):
         self.__logger.info("Running task id %d...", task_id)
-        execution_result = model.run(self.cards.pop())
+        execution_result = model.run(card)
         return execution_result
