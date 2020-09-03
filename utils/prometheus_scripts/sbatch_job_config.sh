@@ -7,7 +7,7 @@
 #SBATCH -N 1
 
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=5GB
+#SBATCH --mem-per-cpu=20GB
 
 ## Job time
 #SBATCH --time=00:10:00
