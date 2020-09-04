@@ -33,7 +33,7 @@ class ConvolutionalNetwork:
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
 
-        history_model_result = model.fit(train_images, train_labels, epochs=1, verbose=2,
+        history_model_result = model.fit(train_images, train_labels, epochs=10, verbose=2,
                                          validation_data=(test_images, test_labels))
 
         return history_model_result.history
