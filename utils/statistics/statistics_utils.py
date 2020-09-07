@@ -91,7 +91,7 @@ class StatisticsUtils:
         return self.__calculate_mean_from_confusion_matrix(Metric.TP)
 
     def __calculate_mean_from_confusion_matrix(self, metric: Metric):
-        values = [record[metric.value][-1] for record in self.__results]
+        values = [record[f"val_{metric.value}"][-1] for record in self.__results]
         return np.mean(values).astype(int)
 
     def get_mean_false_rejection_rate(self):
@@ -101,8 +101,8 @@ class StatisticsUtils:
         return StatisticsUtils.to_percentage(self.__calculate_mean_rate_from_confusion_matrix(Metric.FP, Metric.TN))
 
     def __calculate_mean_rate_from_confusion_matrix(self, metric1: Metric, metric2: Metric):
-        single_rate_list = [record[metric1.value][-1] /
-                            (record[metric1.value][-1] + record[metric2.value][-1])
+        single_rate_list = [record[f"val_{metric1.value}"][-1] /
+                            (record[f"val_{metric1.value}"][-1] + record[f"val_{metric2.value}"][-1])
                             for record in self.__results]
         return np.mean(single_rate_list).round(StatisticsUtils.ROUND_DIGITS)
 
