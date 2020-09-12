@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
         mirrored_strategy = tf.distribute.MirroredStrategy()
 
-        for i in range(1):
+        for i in range(10):
             with mirrored_strategy.scope():
                 # model = Cifar(training, validation)
                 model = ConvolutionalNetwork(training, validation)
