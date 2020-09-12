@@ -17,7 +17,7 @@ class ConvolutionalNetwork:
 
         model = tf.keras.Sequential([
             hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/feature_vector/4",
-                           trainable=True),  # Can be True, see below.
+                           trainable=False),  # Can be True, see below.
             tf.keras.layers.Dense(2, activation='softmax')
         ])
         model.build([None, 299, 299, 3])  # Batch input shape.
