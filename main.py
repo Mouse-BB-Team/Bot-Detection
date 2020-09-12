@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     try:
 
-        proto_loader = ProtoLoader("/home/piotr/Desktop/dataset2/output")
+        proto_loader = ProtoLoader("/net/people/plglothar/cholda/dataset/output")
         user_dataset = proto_loader.get_list_of_sequences()
         training, validation = get_datasets(user_dataset)
 
