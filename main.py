@@ -1,11 +1,5 @@
-import multiprocessing
-import re
-
-from ml_models.piotr_model import PiotrModel
-from ml_models.light_ml_model import LightMlModel
-from ml_models.ml_model import MlModelExample
-from ml_models.convolutional_network import ConvolutionalNetwork
-from utils.task_executor.task_executor import TaskExecutor
+from ml_models.model import ConvolutionalNetwork
+from ml_models.cifar import Cifar
 from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.message.simple_slack_message import SimpleMessage
 from utils.slack_notifier.message.result_slack_message import ResultMessage
@@ -16,10 +10,13 @@ from utils.result_terminator.result_terminator import ResultTerminator
 import subprocess
 from os import environ
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
+from utils.deserializer.protobuf_deserializer import ProtoLoader
+from utils.preproccessing.preproccessing import *
 import tensorflow as tf
 
 NOTIFY = environ.get("NOTIFY")
 CUDA_VISIBLE_DEVICES = environ.get("CUDA_VISIBLE_DEVICES")
+
 
 if __name__ == '__main__':
     commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
@@ -41,30 +38,20 @@ if __name__ == '__main__':
         notifier = SlackNotifier()
         notifier.notify(slack_simple_msg)
 
-    # def obtain_gpus(q):
-    #     import tensorflow as tf
-    #     gpus = tf.config.experimental.list_physical_devices('GPU')
-    #     print(gpus)
-    #     q.put(gpus)
-    #
-    # q = multiprocessing.Queue()
-    # p = multiprocessing.Process(target=obtain_gpus, args=(q,))
-    # p.start()
-    # p.join()
-
-    print("######################## CUDA_VISIBLE_DEVICES #########################")
-    print(CUDA_VISIBLE_DEVICES)
-    print('#######################################################################')
-    # gpus = q.get()
-
     try:
+
+        proto_loader = ProtoLoader("/home/piotr/Desktop/dataset2/output")
+        user_dataset = proto_loader.get_list_of_sequences()
+        training, validation = get_datasets(user_dataset)
+
         result = []
 
         mirrored_strategy = tf.distribute.MirroredStrategy()
 
-        for i in range(5):
+        for i in range(1):
             with mirrored_strategy.scope():
-                model = ConvolutionalNetwork()
+                # model = Cifar(training, validation)
+                model = ConvolutionalNetwork(training, validation)
                 result.append(model.run())
 
         end_time = datetime.now()
