@@ -4,7 +4,6 @@ make-all-scripts-executable:
 	chmod +x utils/prometheus_scripts/run-commit-execution.sh
 	chmod +x utils/prometheus_scripts/run-plgrid-job.sh
 	chmod +x utils/prometheus_scripts/git-push-alias.sh
-	chmod +x utils/prometheus_scripts/json-parser.sh
 	chmod +x utils/prometheus_scripts/create-git-alias.sh
 
 set-connection-with-PLGrid:

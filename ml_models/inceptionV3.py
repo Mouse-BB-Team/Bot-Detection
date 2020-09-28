@@ -1,9 +1,8 @@
 import tensorflow as tf
 import tensorflow_hub as hub
-import matplotlib.pyplot as plt
 
 
-class ConvolutionalNetwork:
+class InceptionV3:
 
     def __init__(self, training: (list, list), validation: (list, list)):
         self.training = training
@@ -17,10 +16,10 @@ class ConvolutionalNetwork:
 
         model = tf.keras.Sequential([
             hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/feature_vector/4",
-                           trainable=False),  # Can be True, see below.
+                           trainable=False),
             tf.keras.layers.Dense(2, activation='softmax')
         ])
-        model.build([None, 299, 299, 3])  # Batch input shape.
+        model.build([None, 299, 299, 3])
 
         model.summary()
 
@@ -31,18 +30,4 @@ class ConvolutionalNetwork:
         history = model.fit(train_images, train_labels, epochs=200,
                             validation_data=(test_images, test_labels))
 
-        # test_loss, test_acc = model.evaluate(test_images, test_labels)
-
         return history.history
-
-        # print(test_acc)
-
-        # plt.plot(history.history['accuracy'], label='accuracy')
-        # plt.plot(history.history['val_accuracy'], label='val_accuracy')
-        # plt.plot(history.history['loss'], label='loss')
-        # plt.plot(history.history['val_loss'], label='val_loss')
-        # plt.xlabel('Epoch')
-        # plt.ylabel('Accuracy')
-        # plt.ylim([0.5, 1])
-        # plt.legend(loc='lower right')
-        # plt.show()

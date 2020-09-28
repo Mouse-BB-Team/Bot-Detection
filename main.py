@@ -1,18 +1,18 @@
-from ml_models.model import ConvolutionalNetwork
-from ml_models.cifar import Cifar
+from datetime import datetime
+import subprocess
+from os import environ
+import tensorflow as tf
+from ml_models.inceptionV3 import InceptionV3
 from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.message.simple_slack_message import SimpleMessage
 from utils.slack_notifier.message.result_slack_message import ResultMessage
 from utils.statistics.statistics_utils import StatisticsUtils
 from utils.slack_notifier.message.color import Color
-from datetime import datetime
-from utils.result_terminator.result_terminator import ResultTerminator
-import subprocess
-from os import environ
 from utils.statistics.statistic_metrics.statistic_metrics import Metric
 from utils.deserializer.protobuf_deserializer import ProtoLoader
-from utils.preproccessing.preproccessing import *
-import tensorflow as tf
+from utils.preproccessing.preprocessor import Preprocessor
+from utils.result_terminator.result_terminator import ResultTerminator
+
 
 NOTIFY = environ.get("NOTIFY")
 CUDA_VISIBLE_DEVICES = environ.get("CUDA_VISIBLE_DEVICES")
@@ -40,9 +40,10 @@ if __name__ == '__main__':
 
     try:
 
-        proto_loader = ProtoLoader("/net/people/plglothar/cholda/dataset2/output")
+        proto_loader = ProtoLoader("/home/piotr/Desktop/dataset2/output")
         user_dataset = proto_loader.get_list_of_sequences()
-        training, validation = get_datasets(user_dataset)
+        preprocessor = Preprocessor(user_dataset)
+        training, validation = preprocessor.get_datasets()
 
         result = []
 
@@ -50,8 +51,7 @@ if __name__ == '__main__':
 
         for i in range(10):
             with mirrored_strategy.scope():
-                # model = Cifar(training, validation)
-                model = ConvolutionalNetwork(training, validation)
+                model = InceptionV3(training, validation)
                 result.append(model.run())
 
         end_time = datetime.now()
