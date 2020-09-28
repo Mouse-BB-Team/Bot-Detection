@@ -24,7 +24,7 @@ class InceptionV3:
 
         model.summary()
 
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000003),
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000005),
                       loss=tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=1),
                       metrics=[
                           tf.metrics.BinaryAccuracy(name='accuracy'),
