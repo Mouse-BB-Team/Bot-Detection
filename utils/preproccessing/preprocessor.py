@@ -71,12 +71,12 @@ class Preprocessor:
         return total
 
     @staticmethod
-    def __split_sets(dataset: list, size: int):
+    def __split_sets(dataset: list, split_size: int):
         total = 0
         training_set = []
         validation_set = []
         for element in dataset:
-            if total < size:
+            if total < split_size:
                 training_set.append(element)
                 total += len(element)
             else:
