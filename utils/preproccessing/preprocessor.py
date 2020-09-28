@@ -37,8 +37,8 @@ class Preprocessor:
         training_labels = np.array(training_labels)
         validation_labels = np.array(validation_labels)
 
-        training_dataset = self.__paint_pictures(training_dataset)
-        validation_dataset = self.__paint_pictures(validation_dataset)
+        training_dataset = self.__generate_images(training_dataset)
+        validation_dataset = self.__generate_images(validation_dataset)
 
         return (training_dataset, training_labels), (validation_dataset, validation_labels)
 
@@ -103,15 +103,15 @@ class Preprocessor:
         labels = [element[1] for element in dataset_tuple]
         return dataset, labels
 
-    def __paint_pictures(self, dataset: list):
+    def __generate_images(self, dataset: list):
         result_dataset = []
 
         for element in dataset:
-            result_dataset.append(self.__scale_and_print(element, self.dims[0], self.dims[1]))
+            result_dataset.append(self.__prepare_image(element, self.dims[0], self.dims[1]))
 
         return np.array(result_dataset)
 
-    def __scale_and_print(self, sequence: DataFrame, x_res: int, y_res: int):
+    def __prepare_image(self, sequence: DataFrame, x_res: int, y_res: int):
 
         def get_x(e: dict):
             if 'xCoordinate' in e:
@@ -150,9 +150,6 @@ class Preprocessor:
             prev_x = x
             prev_y = y
 
-        if self.print_pictures:
-            self.__print_picture(array[:, :, 0])
-
         return array
 
     @staticmethod
@@ -179,6 +176,6 @@ class Preprocessor:
             array[e[0]][e[1]][0] = 1.0
 
     @staticmethod
-    def __print_picture(array):
+    def print_picture(array):
         pyplot.imshow(array, interpolation='none')
         pyplot.show()
