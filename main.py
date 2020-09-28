@@ -15,7 +15,6 @@ from utils.result_terminator.result_terminator import ResultTerminator
 
 
 NOTIFY = environ.get("NOTIFY")
-CUDA_VISIBLE_DEVICES = environ.get("CUDA_VISIBLE_DEVICES")
 
 
 if __name__ == '__main__':
@@ -23,6 +22,9 @@ if __name__ == '__main__':
     commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
     reporter = subprocess.check_output(['whoami']).decode().strip()
     start_time = datetime.now()
+
+    notifier = None
+    slack_simple = None
 
     if NOTIFY is not None:
         slack_simple = SimpleMessage()
@@ -49,7 +51,7 @@ if __name__ == '__main__':
 
         mirrored_strategy = tf.distribute.MirroredStrategy()
 
-        for i in range(10):
+        for i in range(1):
             with mirrored_strategy.scope():
                 model = InceptionV3(training, validation)
                 result.append(model.run())
@@ -76,13 +78,13 @@ if __name__ == '__main__':
                 .with_loss_chart(f"{statistics.create_model_loss_training_plot()}") \
                 .with_percentile_chart(f"{statistics.create_model_accuracy_percentile_histogram()}") \
                 .with_summary(f"Completed job #{commit_hash}") \
+                .with_false_acceptance_rate(f"{statistics.get_mean_false_acceptance_rate()}%") \
+                .with_false_negatives(f"{statistics.get_mean_false_negatives()}") \
+                .with_false_positives(f"{statistics.get_mean_false_positives()}") \
+                .with_false_rejection_rate(f"{statistics.get_mean_false_rejection_rate()}%") \
+                .with_true_negatives(f"{statistics.get_mean_true_negatives()}") \
+                .with_true_positives(f"{statistics.get_mean_true_positives()}") \
                 .build()
-                # .with_false_acceptance_rate(f"{statistics.get_mean_false_acceptance_rate()}%") \
-                # .with_false_negatives(f"{statistics.get_mean_false_negatives()}") \
-                # .with_false_positives(f"{statistics.get_mean_false_positives()}") \
-                # .with_false_rejection_rate(f"{statistics.get_mean_false_rejection_rate()}%") \
-                # .with_true_negatives(f"{statistics.get_mean_true_negatives()}") \
-                # .with_true_positives(f"{statistics.get_mean_true_positives()}") \
 
             notifier.notify(slack_result_msg)
 

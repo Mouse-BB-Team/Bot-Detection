@@ -17,17 +17,24 @@ class InceptionV3:
         model = tf.keras.Sequential([
             hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/feature_vector/4",
                            trainable=False),
-            tf.keras.layers.Dense(2, activation='softmax')
+            tf.keras.layers.Dense(30, activation='relu'),
+            tf.keras.layers.Dense(1, activation='sigmoid')
         ])
         model.build([None, 299, 299, 3])
 
         model.summary()
 
-        model.compile(optimizer=tf.keras.optimizers.Nadam(learning_rate=0.000001),
-                      loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                      metrics=['accuracy'])
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000003),
+                      loss=tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=1),
+                      metrics=[
+                          tf.metrics.BinaryAccuracy(name='accuracy'),
+                          tf.metrics.FalsePositives(name='false_positives'),
+                          tf.metrics.TrueNegatives(name='true_negatives'),
+                          tf.metrics.FalseNegatives(name='false_negatives'),
+                          tf.metrics.TruePositives(name='true_positives')
+                      ])
 
-        history = model.fit(train_images, train_labels, epochs=200,
+        history = model.fit(train_images, train_labels, epochs=100,
                             validation_data=(test_images, test_labels))
 
         return history.history

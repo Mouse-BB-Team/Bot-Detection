@@ -30,6 +30,7 @@ class Preprocessor:
         training_bot_set, validation_bot_set = self.__split_sets(bot_set, training_bot_set_size)
 
         training_bot_set = self.__multiply_bot_set(training_bot_set)
+        validation_bot_set = self.__multiply_bot_set(validation_bot_set)
 
         training_dataset, training_labels = self.__make_dataset(training_user_set, training_bot_set)
         validation_dataset, validation_labels = self.__make_dataset(validation_user_set, validation_bot_set)
@@ -78,7 +79,7 @@ class Preprocessor:
         for element in dataset:
             if total < split_size:
                 training_set.append(element)
-                total += len(element)
+                total += element['sequenceLength'][0]
             else:
                 validation_set.append(element)
         return training_set, validation_set
