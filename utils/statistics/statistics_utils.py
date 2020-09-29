@@ -13,7 +13,7 @@ class StatisticsUtils:
         self.__results: List[Dict] = ml_model_results
         self.__plotter = PlottingUtils()
 
-    def calculate_all_statistics(self):
+    def calculate_all_statistics(self, terminate_to_csv=True):
         calculated_statistics = {Metric.ACC.value: self.get_mean_accuracy(),
                                  Metric.LOSS.value: self.get_mean_loss(),
                                  Metric.FAR.value: self.get_mean_false_acceptance_rate(),
@@ -26,7 +26,8 @@ class StatisticsUtils:
                                  Metric.LOSS_PLOT.value: self.create_model_loss_training_plot(),
                                  Metric.PERCENTILES_HISTOGRAM.value: self.create_model_accuracy_percentile_histogram()}
 
-        self.__terminate_results(calculated_statistics)
+        if terminate_to_csv:
+            self.__terminate_results(calculated_statistics)
 
         return calculated_statistics
 

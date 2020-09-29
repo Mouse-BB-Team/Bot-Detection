@@ -225,6 +225,9 @@ class ResultMessage:
                                     "type": "mrkdwn",
                                     "text": "<%s|Percentile chart - URL>" % self.__percentile_chart
                                 }
+                            },
+                            {
+                                "type": "divider"
                             }
                         ]
                     }
