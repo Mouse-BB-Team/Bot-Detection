@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 import subprocess
 from os import environ
@@ -122,5 +123,12 @@ class Job:
 
 
 if __name__ == '__main__':
-    job = Job()
-    job.run(10)
+    parser = argparse.ArgumentParser(description='Run ML model')
+    parser.add_argument('-d', required=False, type=str, help='directory to dataset')
+    parser.add_argument('-t', required=False, type=int, help='model execution count')
+    args = parser.parse_args()
+    directory = args.d
+    count = args.t
+
+    job = Job(directory)
+    job.run(count)
