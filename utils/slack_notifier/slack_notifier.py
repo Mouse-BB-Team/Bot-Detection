@@ -2,13 +2,15 @@ import logging.config
 from pathlib import Path
 import json
 from http.client import HTTPSConnection
+from dotenv import load_dotenv
+import os
 
 logger_config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('logger.config').absolute()
 logging.config.fileConfig(logger_config_path)
 
 
 class SlackNotifier:
-    __config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('slack-config.json')
+    __config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('config.json')
 
     def __init__(self, config=__config_path):
         self.__logger = logging.getLogger(self.__class__.__name__)
@@ -20,8 +22,11 @@ class SlackNotifier:
     def __load_config(self):
         with open(self.__config_file, 'r') as f:
             loaded_config = json.load(f)
-            self.__hook_URL = loaded_config['hookURL']
-            self.__hook_context = loaded_config['hookContext']
+
+            self.__hook_URL = loaded_config['slackHookURL']
+            config_env_file = loaded_config['config']
+            load_dotenv(Path(config_env_file))
+            self.__hook_context = os.getenv('SLACK_CONTEXT')
 
     def notify(self, json_message):
         message = json.dumps(json_message)

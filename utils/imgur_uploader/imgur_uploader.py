@@ -1,10 +1,12 @@
 from imgurpython import ImgurClient
 from pathlib import Path
 import json
+from dotenv import load_dotenv
+import os
 
 
 class ImgurUploader:
-    __config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('imgur-config.json')
+    __config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('config.json')
 
     def __init__(self, config_file_path=__config_path):
         self.__config_file = config_file_path
@@ -14,8 +16,10 @@ class ImgurUploader:
     def __load_config(self):
         with open(self.__config_file, 'r') as f:
             parsed_json = json.load(f)
-            client_id = parsed_json['client_id']
-            client_secret = parsed_json['client_secret']
+            config_env_file = parsed_json['config']
+            load_dotenv(Path(config_env_file))
+            client_id = os.getenv('IMGUR_CLIENT_ID')
+            client_secret = os.getenv('IMGUR_SECRET')
         return client_id, client_secret
 
     def upload_image(self, image_path):

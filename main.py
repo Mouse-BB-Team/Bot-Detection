@@ -15,10 +15,12 @@ from utils.preproccessing.preprocessor import Preprocessor
 from utils.result_terminator.result_terminator import ResultTerminator
 
 
-class Job:
-    DEFAULT_PATH = "/net/archive/groups/plggpchdyplo/dataset2/output"
+DEFAULT_PATH = '/net/archive/groups/plggpchdyplo/dataset2/output'
 
-    def __init__(self, dataset_path=DEFAULT_PATH):
+
+class Job:
+
+    def __init__(self, dataset_path):
         self.is_notify = environ.get("NOTIFY")
         self.commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
         self.commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
@@ -124,8 +126,8 @@ class Job:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run ML model')
-    parser.add_argument('-d', required=False, type=str, help='directory to dataset')
-    parser.add_argument('-t', required=False, type=int, help='model execution count')
+    parser.add_argument('-d', required=False, type=str, help='directory to dataset', default=DEFAULT_PATH)
+    parser.add_argument('-t', required=False, type=int, help='model execution count', default=1)
     args = parser.parse_args()
     directory = args.d
     count = args.t
