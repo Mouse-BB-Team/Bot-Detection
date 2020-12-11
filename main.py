@@ -35,7 +35,7 @@ class Job:
 
     def load_datasets(self):
         train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-            "/home/piotr/Desktop/augmented_data/",
+            "/net/archive/groups/plggpchdyplo/augmented_data/",
             validation_split=0.2,
             subset="training",
             seed=123,
@@ -43,7 +43,7 @@ class Job:
             batch_size=128)
 
         val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-            "/home/piotr/Desktop/augmented_data/",
+            "/net/archive/groups/plggpchdyplo/augmented_data/",
             validation_split=0.2,
             subset="validation",
             seed=123,
