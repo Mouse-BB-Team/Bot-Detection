@@ -9,3 +9,4 @@ read_protobuf==0.1.1
 tensorflow~=2.3.0
 tensorflow_hub==0.9.0
 python-dotenv~=0.14.0
+dotenv~=0.15.0
