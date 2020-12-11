@@ -30,8 +30,27 @@ class Job:
         proto_loader = ProtoLoader(dataset_path)
         user_dataset = proto_loader.get_list_of_sequences()
         preprocessor = Preprocessor(user_dataset)
-        self.training, self.validation = preprocessor.get_datasets()
+        self.training, self.validation = self.load_datasets()
         self.statistics = None
+
+    def load_datasets(self):
+        train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+            "/home/piotr/Desktop/augmented_data/",
+            validation_split=0.2,
+            subset="training",
+            seed=123,
+            image_size=(299, 299),
+            batch_size=128)
+
+        val_ds = tf.keras.preprocessing.image_dataset_from_directory(
+            "/home/piotr/Desktop/augmented_data/",
+            validation_split=0.2,
+            subset="validation",
+            seed=123,
+            image_size=(299, 299),
+            batch_size=128)
+
+        return train_ds, val_ds
 
     def __notify_start_job(self):
         if self.is_notify is not None:

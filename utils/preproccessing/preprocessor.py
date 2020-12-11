@@ -3,6 +3,9 @@ from random import shuffle
 from pandas import DataFrame
 import numpy as np
 from matplotlib import pyplot
+from PIL import Image
+
+
 
 BOT_USER = 'usr-71'
 TRAIN_SET_PERCENT = 0.75
@@ -26,22 +29,36 @@ class Preprocessor:
 
         training_user_set_size, training_bot_set_size = self.__count_dataset_sizes(user_set, bot_set)
 
-        training_user_set, validation_user_set = self.__split_sets(user_set, training_user_set_size)
-        training_bot_set, validation_bot_set = self.__split_sets(bot_set, training_bot_set_size)
+        # training_user_set, validation_user_set = self.__split_sets(user_set, training_user_set_size)
+        # training_bot_set, validation_bot_set = self.__split_sets(bot_set, training_bot_set_size)
+        #
+        # training_bot_set = self.__multiply_bot_set(training_bot_set)
+        # validation_bot_set = self.__multiply_bot_set(validation_bot_set)
+        #
+        # training_dataset, training_labels = self.__make_dataset(training_user_set, training_bot_set)
+        # validation_dataset, validation_labels = self.__make_dataset(validation_user_set, validation_bot_set)
+        #
+        # training_labels = np.array(training_labels)
+        # validation_labels = np.array(validation_labels)
 
-        training_bot_set = self.__multiply_bot_set(training_bot_set)
-        validation_bot_set = self.__multiply_bot_set(validation_bot_set)
+        # training_dataset = self.__generate_images(training_dataset)
+        # validation_dataset = self.__generate_images(validation_dataset)
 
-        training_dataset, training_labels = self.__make_dataset(training_user_set, training_bot_set)
-        validation_dataset, validation_labels = self.__make_dataset(validation_user_set, validation_bot_set)
+        user_set = self.__generate_images(user_set)
+        bot_set = self.__generate_images(bot_set)
 
-        training_labels = np.array(training_labels)
-        validation_labels = np.array(validation_labels)
+        self.print_picture(user_set[0])
 
-        training_dataset = self.__generate_images(training_dataset)
-        validation_dataset = self.__generate_images(validation_dataset)
+        self._save_to_files(user_set, '/user')
+        self._save_to_files(bot_set, '/bot')
+        # return (training_dataset, training_labels), (validation_dataset, validation_labels)
+        print()
 
-        return (training_dataset, training_labels), (validation_dataset, validation_labels)
+    def _save_to_files(self, set, path):
+        for i in range(0, len(set)):
+            im = Image.fromarray(np.uint8(set[i]))
+            # im.show()
+            im.save('/home/piotr/Desktop/data/' + path + path + str(i) + '.jpg')
 
     def __extract_bot_dataset(self):
         bot_set = self.dataset[self.bot_user_id]
@@ -132,7 +149,7 @@ class Preprocessor:
         scaler_x = x_res / x_resolution
         scaler_y = y_res / y_resolution
 
-        array = np.zeros((x_res, y_res, 3), dtype=float)
+        array = np.zeros((x_res, y_res, 3), dtype=int)
 
         prev_x = get_x(sequence['events'][0])
         prev_y = get_y(sequence['events'][0])
@@ -151,6 +168,8 @@ class Preprocessor:
             prev_x = x
             prev_y = y
 
+
+        # self.print_picture(array)
         return array
 
     @staticmethod
@@ -174,7 +193,7 @@ class Preprocessor:
     @staticmethod
     def __add_points_to_array(x_points, y_points, array):
         for e in zip(x_points, y_points):
-            array[e[0]][e[1]][0] = 1.0
+            array[e[0]][e[1]][0] = 255
 
     @staticmethod
     def print_picture(array):

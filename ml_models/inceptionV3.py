@@ -9,10 +9,10 @@ class InceptionV3:
         self.validation = validation
 
     def run(self):
-        train_images = self.training[0]
-        train_labels = self.training[1]
-        test_images = self.validation[0]
-        test_labels = self.validation[1]
+        # train_images = self.training[0]
+        # train_labels = self.training[1]
+        # test_images = self.validation[0]
+        # test_labels = self.validation[1]
 
         model = tf.keras.Sequential([
             hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/feature_vector/4",
@@ -24,8 +24,15 @@ class InceptionV3:
 
         model.summary()
 
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0000005),
-                      loss=tf.keras.losses.BinaryCrossentropy(from_logits=True, label_smoothing=1),
+        initial_learning_rate = 0.001
+        lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+            initial_learning_rate,
+            decay_steps=10000,
+            decay_rate=0.96,
+            staircase=True)
+
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
+                      loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
                       metrics=[
                           tf.metrics.BinaryAccuracy(name='accuracy'),
                           tf.metrics.FalsePositives(name='false_positives'),
@@ -34,7 +41,7 @@ class InceptionV3:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        history = model.fit(train_images, train_labels, epochs=100,
-                            validation_data=(test_images, test_labels))
+        history = model.fit(self.training, epochs=500, batch_size=128,
+                            validation_data=self.validation)
 
         return history.history
