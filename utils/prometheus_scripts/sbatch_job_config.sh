@@ -10,7 +10,7 @@
 #SBATCH --mem-per-cpu=40GB
 
 ## Job time
-#SBATCH --time=14:00:00
+#SBATCH --time=28:00:00
 
 ## Partition
 #SBATCH -p plgrid-gpu

@@ -41,7 +41,7 @@ class InceptionV3:
                           tf.metrics.TruePositives(name='true_positives')
                       ])
 
-        history = model.fit(self.training, epochs=200, batch_size=128,
+        history = model.fit(self.training, epochs=400, batch_size=128,
                             validation_data=self.validation)
 
         return history.history
