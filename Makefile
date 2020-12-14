@@ -26,5 +26,5 @@ set-connection-with-PLGrid:
 	echo 'export NOTIFY=true' >> ~/.bashrc && \
 	echo 'export TFHUB_CACHE_DIR=$PLG_GROUPS_STORAGE/plggpchdyplo/cnn_models' >> ~/.bashrc && \
 	echo 'export RESULTS_PATH=$PLG_GROUPS_STORAGE/plggpchdyplo/outputs' >> ~/.bashrc && \
-	echo 'IMGUR_CLIENT_ID=\"value\"\nIMGUR_SECRET=\"value\"\nSLACK_CONTEXT=\"value\"' > ~/.env.default && \
-	echo 'export $(cat ~/.env.default | xargs)' >> ~/.bashrc";
+	echo 'IMGUR_CLIENT_ID=\"value\"\nIMGUR_SECRET=\"value\"\nSLACK_CONTEXT=\"value\"' > ~/.env && \
+	echo 'export $(cat ~/.env | xargs)' >> ~/.bashrc";
