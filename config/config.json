@@ -1,5 +1,5 @@
 {
-  "config": "~/.env",
+  "config": "/net/archive/groups/plggpchdyplo/.env",
   "slackHookURL": "hooks.slack.com",
   "notifierName": "Prometheus Notifier"
 }
