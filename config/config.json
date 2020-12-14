@@ -1,5 +1,5 @@
 {
-  "config": "/home/piotr/Desktop/.env",
+  "config": "~/.env.default",
   "slackHookURL": "hooks.slack.com",
   "notifierName": "Prometheus Notifier"
 }
