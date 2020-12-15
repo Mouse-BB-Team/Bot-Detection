@@ -24,7 +24,7 @@ class InceptionV3:
 
         model.summary()
 
-        initial_learning_rate = 0.001
+        initial_learning_rate = 0.01
         lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
             initial_learning_rate,
             decay_steps=10000,
