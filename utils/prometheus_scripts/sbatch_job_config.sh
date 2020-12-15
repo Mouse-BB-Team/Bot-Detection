@@ -10,7 +10,7 @@
 #SBATCH --mem-per-cpu=40GB
 
 ## Job time
-#SBATCH --time=28:00:00
+#SBATCH --time=52:00:00
 
 ## Partition
 #SBATCH -p plgrid-gpu
@@ -26,4 +26,4 @@ cd ../..
 
 pip install -r requirements.txt
 
-python3 main.py
+python3 main.py -t 4
