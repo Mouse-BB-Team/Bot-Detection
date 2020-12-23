@@ -26,4 +26,4 @@ cd ../..
 
 pip install -r requirements.txt
 
-python3 main.py
+python3 main.py -d "/net/archive/groups/plggpchdyplo/augmented_data/"

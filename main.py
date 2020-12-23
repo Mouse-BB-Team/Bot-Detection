@@ -17,11 +17,13 @@ from utils.result_terminator.result_terminator import ResultTerminator
 
 
 DEFAULT_PATH = '/net/archive/groups/plggpchdyplo/dataset2/output'
+TRAIN_DIR = '/train'
+VAL_DIR = '/val'
 
 
 class DatasetType(Enum):
-    BINARY = 0
-    IMAGES = 1
+    IMAGES = 0
+    BINARY = 1
 
 
 class Job:
@@ -49,17 +51,13 @@ class Job:
     @staticmethod
     def load_datasets(dataset_path):
         train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-            dataset_path,
-            validation_split=0.2,
-            subset="training",
+            dataset_path + TRAIN_DIR,
             seed=123,
             image_size=(299, 299),
             batch_size=128)
 
         val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-            dataset_path,
-            validation_split=0.2,
-            subset="validation",
+            dataset_path + VAL_DIR,
             seed=123,
             image_size=(299, 299),
             batch_size=128)
@@ -159,9 +157,9 @@ class Job:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run ML model')
-    parser.add_argument('-d', required=False, type=str, help='directory to dataset', default=DEFAULT_PATH)
-    parser.add_argument('-t', required=False, type=int, help='model execution count', default=1)
-    parser.add_argument('--type', required=False, type=int, help='1 for images, 0 for binary dataset', default=0)
+    parser.add_argument('-d', required=False, type=str, help=f'directory to dataset (default {DEFAULT_PATH})', default=DEFAULT_PATH)
+    parser.add_argument('-t', required=False, type=int, help='model execution count (default 1)', default=1)
+    parser.add_argument('--type', required=False, type=int, help='0 for images, 1 for binary dataset (default 0)', default=0)
     args = parser.parse_args()
     directory = args.d
     count = args.t

@@ -1,4 +1,6 @@
 import argparse
+from math import floor
+
 import Augmentor
 import os
 import random
@@ -8,6 +10,8 @@ from utils.preproccessing.preprocessor import Preprocessor
 
 USER_DIR = '/user'
 BOT_DIR = '/bot'
+TRAIN_DIR = '/train'
+VAL_DIR = '/val'
 
 
 def load_serialized_data(dataset_path):
@@ -43,29 +47,74 @@ def delete_tmp_dir(temp_dir):
     shutil.rmtree(temp_dir)
 
 
+def create_dir_if_not_exists(dir):
+    if not os.path.isdir(dir):
+        create_tmp_dir(dir)
+    else:
+        delete_tmp_dir(dir)
+        create_tmp_dir(dir)
+
+
+def get_file_names(dir):
+    listed_dir = [os.path.join(dir, file) for file in os.listdir(dir)]
+    return [file for file in listed_dir if os.path.isfile(file)]
+
+
+def move_files(filenames, dest):
+    for file in filenames:
+        shutil.move(file, dest)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Augment data')
     parser.add_argument('-d', required=True, type=str, help='directory to dataset')
     parser.add_argument('-o', required=True, type=str, help='directory to output images')
-    parser.add_argument('-s', required=False, type=int, help='number of samples in each dataset part', default=30000)
+    parser.add_argument('-s', required=False, type=int, help='number of samples in each dataset part (default=30000)', default=30000)
+    parser.add_argument('--val_split', required=False, type=int, help='percentage value of dataset split for validation (default=20%)', default=20)
     args = parser.parse_args()
     dataset_path = args.d
     output_path = args.o
     size = args.s
+    split = args.val_split
 
-    temp_dir = '/tmp/bot_detection_augmentation_' + str(random.randint(100000, 1000000))
+    rand_value = str(random.randint(100000, 1000000))
+    temp_dir = '/tmp/bot_detection_data_' + rand_value
+    temp_aug_dir = '/tmp/bot_detection_augmentation_' + rand_value
 
-    if not os.path.isdir(temp_dir):
-        create_tmp_dir(temp_dir)
-    else:
-        delete_tmp_dir(temp_dir)
-        create_tmp_dir(temp_dir)
+    create_dir_if_not_exists(temp_dir)
+    create_dir_if_not_exists(temp_aug_dir)
 
-    if not os.path.isdir(output_path):
-        os.mkdir(output_path)
+    if os.path.isdir(output_path):
+        shutil.rmtree(output_path)
+    os.mkdir(output_path)
+
+    create_dir_if_not_exists(output_path + TRAIN_DIR)
+    create_dir_if_not_exists(output_path + VAL_DIR)
 
     dataset = load_serialized_data(dataset_path)
     save_data_to_images(dataset, temp_dir)
-    augment_data(temp_dir, output_path, size)
+    augment_data(temp_dir, temp_aug_dir, size)
+
+    val_samples = floor(size * (split / 100))
+    train_samples = size - val_samples
+
+    user_data_files = get_file_names(temp_aug_dir + USER_DIR)
+    bot_data_files = get_file_names(temp_aug_dir + BOT_DIR)
+
+    random.shuffle(user_data_files)
+    random.shuffle(bot_data_files)
+
+    train_user_files = user_data_files[0:train_samples]
+    train_bot_samples = bot_data_files[0:train_samples]
+
+    val_user_files = user_data_files[train_samples:]
+    val_bot_files = bot_data_files[train_samples:]
+
+    move_files(train_user_files, output_path + TRAIN_DIR + USER_DIR)
+    move_files(train_bot_samples, output_path + TRAIN_DIR + BOT_DIR)
+    move_files(val_user_files, output_path + VAL_DIR + USER_DIR)
+    move_files(val_bot_files, output_path + VAL_DIR + BOT_DIR)
+
     delete_tmp_dir(temp_dir)
+    delete_tmp_dir(temp_aug_dir)
 
