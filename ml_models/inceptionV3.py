@@ -9,10 +9,6 @@ class InceptionV3:
         self.validation = validation
 
     def run(self):
-        # train_images = self.training[0]
-        # train_labels = self.training[1]
-        # test_images = self.validation[0]
-        # test_labels = self.validation[1]
 
         model = tf.keras.Sequential([
             hub.KerasLayer("https://tfhub.dev/google/imagenet/inception_v3/feature_vector/4",
