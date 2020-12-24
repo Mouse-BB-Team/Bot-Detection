@@ -2,8 +2,12 @@ import logging.config
 from pathlib import Path
 import json
 from http.client import HTTPSConnection
-from dotenv import load_dotenv
 import os
+try:
+    from dotenv import load_dotenv
+    DOTENV_LOADED = True
+except ModuleNotFoundError:
+    DOTENV_LOADED = False
 
 logger_config_path = Path(__file__).parent.parent.parent.joinpath('config').joinpath('logger.config').absolute()
 logging.config.fileConfig(logger_config_path)
@@ -25,7 +29,8 @@ class SlackNotifier:
 
             self.__hook_URL = loaded_config['slackHookURL']
             config_env_file = loaded_config['config']
-            load_dotenv(Path(config_env_file))
+            if DOTENV_LOADED:
+                load_dotenv(Path(config_env_file))
             self.__hook_context = os.getenv('SLACK_CONTEXT')
 
     def notify(self, json_message):

@@ -3,6 +3,7 @@ from datetime import datetime
 import subprocess
 from os import environ
 import tensorflow as tf
+from enum import Enum
 from ml_models.inceptionV3 import InceptionV3
 from utils.slack_notifier.slack_notifier import SlackNotifier
 from utils.slack_notifier.message.simple_slack_message import SimpleMessage
@@ -16,22 +17,52 @@ from utils.result_terminator.result_terminator import ResultTerminator
 
 
 DEFAULT_PATH = '/net/archive/groups/plggpchdyplo/dataset2/output'
+TRAIN_DIR = '/train'
+VAL_DIR = '/val'
+
+
+class DatasetType(Enum):
+    IMAGES = 0
+    BINARY = 1
 
 
 class Job:
 
-    def __init__(self, dataset_path):
+    def __init__(self, dataset_path, dataset_type):
         self.is_notify = environ.get("NOTIFY")
         self.commit_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
         self.commit_msg = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode().strip()
         self.reporter = subprocess.check_output(['whoami']).decode().strip()
         self.start_time = datetime.now()
         self.notifier = SlackNotifier()
-        proto_loader = ProtoLoader(dataset_path)
-        user_dataset = proto_loader.get_list_of_sequences()
-        preprocessor = Preprocessor(user_dataset)
-        self.training, self.validation = preprocessor.get_datasets()
+
+        if dataset_type == DatasetType.BINARY.value:
+            proto_loader = ProtoLoader(dataset_path)
+            user_dataset = proto_loader.get_list_of_sequences()
+            preprocessor = Preprocessor(user_dataset)
+            training, validation = preprocessor.get_datasets()
+            self.training = tf.data.Dataset.from_tensor_slices(training).batch(128)
+            self.validation = tf.data.Dataset.from_tensor_slices(validation).batch(128)
+        elif dataset_type == DatasetType.IMAGES.value:
+            self.training, self.validation = self.load_datasets(dataset_path)
+
         self.statistics = None
+
+    @staticmethod
+    def load_datasets(dataset_path):
+        train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+            dataset_path + TRAIN_DIR,
+            seed=123,
+            image_size=(299, 299),
+            batch_size=128)
+
+        val_ds = tf.keras.preprocessing.image_dataset_from_directory(
+            dataset_path + VAL_DIR,
+            seed=123,
+            image_size=(299, 299),
+            batch_size=128)
+
+        return train_ds, val_ds
 
     def __notify_start_job(self):
         if self.is_notify is not None:
@@ -126,11 +157,13 @@ class Job:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run ML model')
-    parser.add_argument('-d', required=False, type=str, help='directory to dataset', default=DEFAULT_PATH)
-    parser.add_argument('-t', required=False, type=int, help='model execution count', default=1)
+    parser.add_argument('-d', required=False, type=str, help=f'directory to dataset (default {DEFAULT_PATH})', default=DEFAULT_PATH)
+    parser.add_argument('-t', required=False, type=int, help='model execution count (default 1)', default=1)
+    parser.add_argument('--type', required=False, type=int, help='0 for images, 1 for binary dataset (default 0)', default=0)
     args = parser.parse_args()
     directory = args.d
     count = args.t
+    dataset_type = args.type
 
-    job = Job(directory)
+    job = Job(directory, dataset_type)
     job.run(count)

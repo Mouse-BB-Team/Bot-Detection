@@ -3,6 +3,8 @@ from random import shuffle
 from pandas import DataFrame
 import numpy as np
 from matplotlib import pyplot
+from PIL import Image
+
 
 BOT_USER = 'usr-71'
 TRAIN_SET_PERCENT = 0.75
@@ -21,6 +23,14 @@ class Preprocessor:
         self.bot_set_multiplier = bot_dataset_multiplier
         self.print_pictures = print_pictures
 
+    def save_data_as_images(self, path, sub_user_path, sub_bot_path):
+        user_set, bot_set = self.__extract_bot_dataset()
+        user_set = self.__generate_images(user_set)
+        bot_set = self.__generate_images(bot_set)
+
+        self._save_to_files(user_set, path, sub_user_path)
+        self._save_to_files(bot_set, path, sub_bot_path)
+
     def get_datasets(self):
         user_set, bot_set = self.__extract_bot_dataset()
 
@@ -38,10 +48,16 @@ class Preprocessor:
         training_labels = np.array(training_labels)
         validation_labels = np.array(validation_labels)
 
-        training_dataset = self.__generate_images(training_dataset)
-        validation_dataset = self.__generate_images(validation_dataset)
+        training_dataset = self.__generate_images(training_dataset) / 255.0
+        validation_dataset = self.__generate_images(validation_dataset) / 255.0
 
         return (training_dataset, training_labels), (validation_dataset, validation_labels)
+
+    @staticmethod
+    def _save_to_files(dataset, path, subpath):
+        for i in range(0, len(dataset)):
+            im = Image.fromarray(np.uint8(dataset[i]))
+            im.save(path + subpath + subpath + str(i) + '.jpg')
 
     def __extract_bot_dataset(self):
         bot_set = self.dataset[self.bot_user_id]
@@ -132,7 +148,7 @@ class Preprocessor:
         scaler_x = x_res / x_resolution
         scaler_y = y_res / y_resolution
 
-        array = np.zeros((x_res, y_res, 3), dtype=float)
+        array = np.zeros((x_res, y_res, 3), dtype=int)
 
         prev_x = get_x(sequence['events'][0])
         prev_y = get_y(sequence['events'][0])
@@ -174,7 +190,7 @@ class Preprocessor:
     @staticmethod
     def __add_points_to_array(x_points, y_points, array):
         for e in zip(x_points, y_points):
-            array[e[0]][e[1]][0] = 1.0
+            array[e[0]][e[1]][0] = 255
 
     @staticmethod
     def print_picture(array):

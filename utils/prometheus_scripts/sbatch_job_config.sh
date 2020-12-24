@@ -10,7 +10,7 @@
 #SBATCH --mem-per-cpu=40GB
 
 ## Job time
-#SBATCH --time=05:00:00
+#SBATCH --time=26:00:00
 
 ## Partition
 #SBATCH -p plgrid-gpu
@@ -18,7 +18,7 @@
 
 
 module add plgrid/tools/python/3.8
-module add plgrid/libs/tensorflow-gpu/2.2.0-python-3.8
+module add plgrid/libs/tensorflow-gpu/2.3.1-python-3.8
 module add plgrid/apps/cuda/10.1
 
 cd $SLURM_SUBMIT_DIR
@@ -26,4 +26,4 @@ cd ../..
 
 pip install -r requirements.txt
 
-python3 main.py -t 10
+python3 main.py -d "/net/archive/groups/plggpchdyplo/augmented_data/"
