@@ -13,7 +13,7 @@
 #SBATCH --time=00:10:00
 
 ## Partition
-#SBATCH -p plgrid-testing
+#SBATCH -p plgrid
 ##SBATCH --gres=gpu:2
 
 
