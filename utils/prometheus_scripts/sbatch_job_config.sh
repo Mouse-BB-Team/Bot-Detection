@@ -10,11 +10,11 @@
 #SBATCH --mem-per-cpu=40GB
 
 ## Job time
-#SBATCH --time=26:00:00
+#SBATCH --time=00:10:00
 
 ## Partition
-#SBATCH -p plgrid-gpu
-#SBATCH --gres=gpu:2
+#SBATCH -p plgrid-testing
+##SBATCH --gres=gpu:2
 
 
 module add plgrid/tools/python/3.8
@@ -26,4 +26,4 @@ cd ../..
 
 pip install -r requirements.txt
 
-python3 main.py -d "/net/archive/groups/plggpchdyplo/augmented_data/"
+python3 main.py -d "/net/archive/groups/plggpchdyplo/augmented_data/" --type 1
